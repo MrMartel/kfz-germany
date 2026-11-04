@@ -3,7 +3,7 @@ let platesData = [];
 // Chargement des données JSON
 async function loadData() {
     try {
-        const response = await response = await fetch('data.json');
+        const response = await fetch('data.json');
         platesData = await response.json();
         displayResults(platesData);
     } catch (error) {
@@ -50,7 +50,7 @@ function displayResults(data) {
 // Gestion de la recherche en temps réel
 document.getElementById('searchInput').addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase().trim();
-    const filtered = platesData.cases ? platesData : platesData.filter(item => 
+    const filtered = platesData.filter(item => 
         item.prefix.toLowerCase().includes(term) ||
         item.city.toLowerCase().includes(term) ||
         item.state.toLowerCase().includes(term) ||
