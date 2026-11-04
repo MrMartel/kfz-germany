@@ -4,30 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
-    <!-- Favicon officiel : Drapeau allemand (Noir, Rouge, Or) -->
+    <!-- Favicon drapeau allemand -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23000'/><rect y='1' width='3' height='1' fill='%23D00'/><rect y='2' width='3' height='1' fill='%23FFCE00'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
     <div class="max-w-5xl mx-auto px-4 py-10">
         
-        <!-- En-tête avec une véritable plaque d'immatriculation allemande visuelle -->
+        <!-- En-tête avec plaque d'immatriculation européenne réaliste -->
         <header class="text-center mb-8">
             <div class="flex justify-center mb-4">
-                <!-- Grande plaque d'immatriculation décorative "D-DEUTSCHLAND" -->
-                <div class="flex border-4 border-slate-700 rounded-xl overflow-hidden bg-white shadow-2xl w-56 h-20">
-                    <div class="bg-blue-800 text-white w-10 flex flex-col items-center justify-between py-2 text-xs font-bold">
-                        <span>D</span>
-                        <span class="text-[9px] leading-[3px] text-amber-300">★★★★★<br>★★★★★</span>
+                <!-- Plaque réaliste : Bande bleue européenne avec cercle d'étoiles et lettrage normalisé -->
+                <div class="flex border-2 border-slate-700 rounded-lg overflow-hidden bg-white shadow-2xl w-64 h-20 items-center">
+                    <!-- Bande bleue UE -->
+                    <div class="bg-blue-700 text-white w-10 h-full flex flex-col items-center justify-between py-2 shadow-inner">
+                        <!-- Cercle d'étoiles SVG simplifié réaliste -->
+                        <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
+                        </svg>
+                        <span class="text-xs font-black tracking-widest">D</span>
                     </div>
-                    <div class="flex-1 flex items-center justify-center font-black tracking-widest text-3xl text-slate-900 bg-white">
+                    <!-- Numéro central de la plaque -->
+                    <div class="flex-1 flex items-center justify-center font-bold tracking-[0.25em] text-3xl text-slate-900">
                         D • BRD
                     </div>
                 </div>
             </div>
             <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
             <p class="text-slate-400 text-sm sm:text-base max-w-lg mx-auto">
-                Répertoire officiel et interactif des préfixes d'immatriculation automobile en Allemagne.
+                Encyclopédie interactive des préfixes d'immatriculation automobile en Allemagne.
             </p>
         </header>
 
@@ -45,7 +50,6 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
                 <div>
                     <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <!-- Icône de drapeau allemand miniature -->
                         <span class="inline-block w-4 h-3 rounded overflow-hidden flex flex-col border border-slate-600">
                             <span class="bg-black h-1"></span>
                             <span class="bg-red-600 h-1"></span>
@@ -53,12 +57,12 @@
                         </span>
                         Carte interactive et Sélection par Land
                     </h2>
-                    <p class="text-xs text-slate-400 mt-1">Cliquez sur un Land pour filtrer instantanément les immatriculations associées.</p>
+                    <p class="text-xs text-slate-400 mt-1">Sélectionnez une région pour filtrer instantanément les immatriculations associées.</p>
                 </div>
                 <span id="resultCount" class="text-xs text-blue-400 font-semibold bg-blue-950/60 px-3 py-1 rounded-full border border-blue-800/50"></span>
             </div>
 
-            <!-- Conteneur des boutons de Länder (Carte schématique cliquable) -->
+            <!-- Conteneur des boutons de Länder (Grille interactive) -->
             <div id="statesFilterContainer" class="flex flex-wrap gap-2 pt-2 border-t border-slate-700/60">
                 <!-- Injecté dynamiquement par JS -->
             </div>

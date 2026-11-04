@@ -8,7 +8,7 @@ async function loadData() {
         initStatesFilter();
         displayResults(platesData);
     } catch (error) {
-        console.error("Erreur de chargement des données :", error);
+        console.error("Erreur de chargement :", error);
     }
 }
 
@@ -16,9 +16,8 @@ function initStatesFilter() {
     const container = document.getElementById('statesFilterContainer');
     const states = [...new Set(platesData.map(item => item.state))].sort();
 
-    // Bouton "Tous les Länder"
     const allBtn = document.createElement('button');
-    allBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+    allBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
     allBtn.textContent = '🇩🇪 Tous les Länder';
     allBtn.onclick = () => {
         selectedState = '';
@@ -27,10 +26,9 @@ function initStatesFilter() {
     };
     container.appendChild(allBtn);
 
-    // Boutons pour chaque Land
     states.forEach(state => {
         const btn = document.createElement('button');
-        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
         btn.textContent = state;
         btn.onclick = () => {
             selectedState = state;
@@ -44,9 +42,9 @@ function initStatesFilter() {
 function updateActiveFilterButton(activeBtn) {
     const container = document.getElementById('statesFilterContainer');
     Array.from(container.children).forEach(child => {
-        child.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+        child.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     });
-    activeBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+    activeBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
 }
 
 function displayResults(data) {
@@ -70,13 +68,15 @@ function displayResults(data) {
         card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group';
         
         card.innerHTML = `
-            <!-- Plaque d'immatriculation allemande réaliste -->
-            <div class="flex border-2 border-slate-700 rounded-xl overflow-hidden bg-white shadow-md shrink-0 w-32 h-16 group-hover:scale-105 transition-transform">
-                <div class="bg-blue-800 text-white w-7 flex flex-col items-center justify-between py-1.5 text-[10px] font-bold">
-                    <span>D</span>
-                    <span class="text-[7px] leading-[3px] text-amber-300">★★★★★<br>★★★★★</span>
+            <!-- Plaque d'immatriculation allemande réaliste (bande bleue UE à gauche avec étoiles minimalistes et D) -->
+            <div class="flex border-2 border-slate-700 rounded-xl overflow-hidden bg-white shadow-md shrink-0 w-32 h-16 items-center group-hover:scale-105 transition-transform">
+                <div class="bg-blue-700 text-white w-7 h-full flex flex-col items-center justify-between py-1.5 shadow-inner">
+                    <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
+                    </svg>
+                    <span class="text-[10px] font-black tracking-widest">D</span>
                 </div>
-                <div class="flex-1 flex items-center justify-center font-black tracking-widest text-2xl text-slate-900 bg-white">
+                <div class="flex-1 flex items-center justify-center font-black tracking-widest text-2xl text-slate-900">
                     ${item.prefix}
                 </div>
             </div>
