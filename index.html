@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
+
+    <!-- Icône pour l'écran d'accueil iOS (Apple Touch Icon - Drapeau Allemand) -->
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/512px-Flag_of_Germany.svg.png">
+    
+    <!-- Nom court affiché sous l'icône sur l'écran d'accueil iOS -->
+    <meta name="apple-mobile-web-app-title" content="Kfz Finder">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Favicon classique pour navigateur Web -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23000'/><rect y='1' width='3' height='1' fill='%23D00'/><rect y='2' width='3' height='1' fill='%23FFCE00'/></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .land-path {
@@ -28,7 +38,7 @@
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
     <div class="max-w-5xl mx-auto px-4 py-10">
         
-        <!-- En-tête avec plaque réaliste -->
+        <!-- En-tête avec plaque d'immatriculation européenne réaliste -->
         <header class="text-center mb-8">
             <div class="flex justify-center mb-4">
                 <div class="flex border-2 border-slate-700 rounded-lg overflow-hidden bg-white shadow-2xl w-64 h-20 items-center">
@@ -45,84 +55,4 @@
             </div>
             <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
             <p class="text-slate-400 text-sm sm:text-base max-w-lg mx-auto">
-                Encyclopédie interactive des préfixes d'immatriculation automobile en Allemagne.
-            </p>
-        </header>
-
-        <!-- Barre de recherche -->
-        <div class="relative mb-6 max-w-2xl mx-auto">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </span>
-            <input type="text" id="searchInput" placeholder="Rechercher par préfixe (ex: RV, M, B) ou par ville..." 
-                class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-        </div>
-
-        <!-- Section Carte Interactive & Boutons -->
-        <div class="bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
-            <div class="flex items-center justify-between gap-4 mb-4">
-                <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <span class="inline-block w-4 h-3 rounded overflow-hidden flex flex-col border border-slate-600">
-                        <span class="bg-black h-1"></span>
-                        <span class="bg-red-600 h-1"></span>
-                        <span class="bg-yellow-400 h-1"></span>
-                    </span>
-                    Carte interactive de l'Allemagne
-                </h2>
-                <span id="resultCount" class="text-xs text-blue-400 font-semibold bg-blue-950/60 px-3 py-1 rounded-full border border-blue-800/50"></span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                <!-- Carte SVG schématique interactive -->
-                <div class="md:col-span-1 flex justify-center bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
-                    <svg id="germanyMap" viewBox="0 0 400 500" class="w-full max-w-[220px] h-auto">
-                        <!-- Schleswig-Holstein -->
-                        <path class="land-path" data-state="Schleswig-Holstein" d="M 160 20 L 220 20 L 230 70 L 170 80 Z" />
-                        <!-- Mecklemburg-Vorpommern -->
-                        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M 230 40 L 340 40 L 330 110 L 230 80 Z" />
-                        <!-- Niedersachsen -->
-                        <path class="land-path" data-state="Basse-Saxe" d="M 100 80 L 210 80 L 220 160 L 120 170 Z" />
-                        <!-- Brandenburg -->
-                        <path class="land-path" data-state="Brandebourg" d="M 260 110 L 350 110 L 340 210 L 250 200 Z" />
-                        <!-- Berlin -->
-                        <path class="land-path" data-state="Berlin" d="M 290 145 L 315 145 L 315 165 L 290 165 Z" />
-                        <!-- Sachsen-Anhalt -->
-                        <path class="land-path" data-state="Saxe-Anhalt" d="M 200 160 L 260 160 L 250 240 L 190 220 Z" />
-                        <!-- Nordrhein-Westfalen -->
-                        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M 60 170 L 140 170 L 140 260 L 50 250 Z" />
-                        <!-- Hessen -->
-                        <path class="land-path" data-state="Hesse" d="M 130 250 L 190 240 L 180 330 L 120 320 Z" />
-                        <!-- Thüringen -->
-                        <path class="land-path" data-state="Thuringe" d="M 190 230 L 260 230 L 250 290 L 180 280 Z" />
-                        <!-- Sachsen -->
-                        <path class="land-path" data-state="Saxe" d="M 260 210 L 350 210 L 340 280 L 250 280 Z" />
-                        <!-- Rheinland-Pfalz -->
-                        <path class="land-path" data-state="Rhénanie-Palatinat" d="M 50 270 L 120 270 L 110 350 L 50 330 Z" />
-                        <!-- Saarland -->
-                        <path class="land-path" data-state="Sarre" d="M 40 335 L 75 335 L 70 365 L 35 360 Z" />
-                        <!-- Baden-Württemberg -->
-                        <path class="land-path" data-state="Bade-Wurtemberg" d="M 90 350 L 170 340 L 160 450 L 80 440 Z" />
-                        <!-- Bayern -->
-                        <path class="land-path" data-state="Bavière" d="M 170 300 L 320 290 L 310 450 L 160 440 Z" />
-                    </svg>
-                </div>
-
-                <!-- Boutons de filtres par Land -->
-                <div class="md:col-span-2">
-                    <p class="text-xs text-slate-400 mb-3">Cliquez sur une région ci-dessus ou sélectionnez un Land dans la liste :</p>
-                    <div id="statesFilterContainer" class="flex flex-wrap gap-2">
-                        <!-- Injecté dynamiquement par JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grille des résultats -->
-        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Injecté dynamiquement par JavaScript -->
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+                Encyclopédie interactive des préfixes d'immatriculation
