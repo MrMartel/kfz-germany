@@ -1,0 +1,86 @@
+[
+  {
+    "prefix": "B",
+    "city": "Berlin",
+    "state": "Berlin",
+    "region": "Capitale / Ville-État"
+  },
+  {
+    "prefix": "M",
+    "city": "München (Munich)",
+    "state": "Bavière (Bayern)",
+    "region": "Haute-Bavière"
+  },
+  {
+    "prefix": "HH",
+    "city": "Hamburg",
+    "state": "Hambourg",
+    "region": "Ville-État"
+  },
+  {
+    "prefix": "K",
+    "city": "Köln (Cologne)",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "District de Cologne"
+  },
+  {
+    "prefix": "F",
+    "city": "Frankfurt am Main",
+    "state": "Hesse",
+    "region": "District de Darmstadt"
+  },
+  {
+    "prefix": "S",
+    "city": "Stuttgart",
+    "state": "Bade-Wurtemberg",
+    "region": "District de Stuttgart"
+  },
+  {
+    "prefix": "D",
+    "city": "Düsseldorf",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "District de Düsseldorf"
+  },
+  {
+    "prefix": "BN",
+    "city": "Bonn",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "District de Cologne"
+  },
+  {
+    "prefix": "AC",
+    "city": "Aachen (Aix-la-Chapelle)",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "Région urbaine d'Aix-la-Chapelle"
+  },
+  {
+    "prefix": "DO",
+    "city": "Dortmund",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "District d'Arnsberg"
+  },
+  {
+    "prefix": "E",
+    "city": "Essen",
+    "state": "Rhénanie-du-Nord-Westphalie",
+    "region": "District de Düsseldorf"
+  },
+  {
+    "prefix": "HB",
+    "city": "Brême",
+    "state": "Brême (Hansestadt Bremen)",
+    "region": "Ville-État"
+  },
+  {
+    "prefix": "L",
+    "city": "Leipzig",
+    "state": "Saxe",
+    "region": "District de Leipzig"
+  },
+  {
+    "prefix": "N",
+    "city": "Nürnberg (Nuremberg)",
+    "state": "Bavière (Bayern)",
+    "region": "Moyenne-Franconie"
+  }
+]
