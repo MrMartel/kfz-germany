@@ -5,40 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
 
-    <!-- Icône pour l'écran d'accueil iOS (Apple Touch Icon - Drapeau Allemand) -->
+    <!-- Icône écran d'accueil iOS -->
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/512px-Flag_of_Germany.svg.png">
-    
-    <!-- Nom court affiché sous l'icône sur l'écran d'accueil iOS -->
     <meta name="apple-mobile-web-app-title" content="Kfz Finder">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!-- Favicon classique pour navigateur Web -->
+    <!-- Favicon classique -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23000'/><rect y='1' width='3' height='1' fill='%23D00'/><rect y='2' width='3' height='1' fill='%23FFCE00'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .land-path {
             fill: #334155;
-            stroke: #475569;
-            stroke-width: 1.5;
-            transition: all 0.2s ease;
+            stroke: #1e293b;
+            stroke-width: 1;
+            transition: all 0.25s stroke, all 0.25s fill;
             cursor: pointer;
         }
         .land-path:hover {
-            fill: #2563eb;
-            stroke: #60a5fa;
+            fill: #3b82f6;
+            stroke: #93c5fd;
+            stroke-width: 1.5;
+            filter: drop-shadow(0px 0px 6px rgba(59, 130, 246, 0.5));
         }
         .land-path.active {
-            fill: #1d4ed8;
-            stroke: #93c5fd;
-            stroke-width: 2.5;
+            fill: #2563eb;
+            stroke: #60a5fa;
+            stroke-width: 2;
+            filter: drop-shadow(0px 0px 8px rgba(37, 99, 235, 0.8));
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
     <div class="max-w-5xl mx-auto px-4 py-10">
         
-        <!-- En-tête avec plaque d'immatriculation européenne réaliste -->
+        <!-- En-tête -->
         <header class="text-center mb-8">
             <div class="flex justify-center mb-4">
                 <div class="flex border-2 border-slate-700 rounded-lg overflow-hidden bg-white shadow-2xl w-64 h-20 items-center">
@@ -55,4 +56,89 @@
             </div>
             <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
             <p class="text-slate-400 text-sm sm:text-base max-w-lg mx-auto">
-                Encyclopédie interactive des préfixes d'immatriculation
+                Encyclopédie interactive des préfixes d'immatriculation automobile en Allemagne.
+            </p>
+        </header>
+
+        <!-- Barre de recherche -->
+        <div class="relative mb-6 max-w-2xl mx-auto">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </span>
+            <input type="text" id="searchInput" placeholder="Rechercher par préfixe (ex: RV, M, B) ou par ville..." 
+                class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+        </div>
+
+        <!-- Section Carte Interactive & Boutons -->
+        <div class="bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
+            <div class="flex items-center justify-between gap-4 mb-4">
+                <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span class="inline-block w-4 h-3 rounded overflow-hidden flex flex-col border border-slate-600">
+                        <span class="bg-black h-1"></span>
+                        <span class="bg-red-600 h-1"></span>
+                        <span class="bg-yellow-400 h-1"></span>
+                    </span>
+                    Carte interactive de l'Allemagne
+                </h2>
+                <span id="resultCount" class="text-xs text-blue-400 font-semibold bg-blue-950/60 px-3 py-1 rounded-full border border-blue-800/50"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <!-- Carte SVG aux contours géographiques réalistes -->
+                <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 shadow-inner">
+                    <svg id="germanyMap" viewBox="0 0 590 800" class="w-full max-w-[210px] h-auto drop-shadow-md">
+                        <!-- Schleswig-Holstein -->
+                        <path class="land-path" data-state="Schleswig-Holstein" d="M228 12l18 3 15 22 25 10 32-1 12 18-5 28-22 17-25-10-38 12-20-15 8-28-20-12 20-44z" />
+                        <!-- Mecklemburg-Vorpommern -->
+                        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M305 64l48-12 65 18 85 2 28 35-22 28-58 12-42-18-35 8-45-18-28-35 4-20z" />
+                        <!-- Niedersachsen -->
+                        <path class="land-path" data-state="Basse-Saxe" d="M125 110l60-18 43 28 30-18 38 18 8 45-28 38 12 38-35 25-48-12-25 18-42-18-25 28-40-22-15-42 32-38-15-32z" />
+                        <!-- Bremen -->
+                        <path class="land-path" data-state="Brême" d="M188 152l12-8 8 10-10 12z" />
+                        <!-- Hamburg -->
+                        <path class="land-path" data-state="Hambourg" d="M262 118l18 2 5 12-15 10-12-10z" />
+                        <!-- Brandenburg -->
+                        <path class="land-path" data-state="Brandebourg" d="M380 152l58-10 42 38 18 70-38 52-62 10-32-32 8-52 18-28-12-48z" />
+                        <!-- Berlin -->
+                        <path class="land-path" data-state="Berlin" d="M430 212l22-2 8 18-18 12-15-12z" />
+                        <!-- Sachsen-Anhalt -->
+                        <path class="land-path" data-state="Saxe-Anhalt" d="M312 212l42 12 22 48-18 42-45 18-38-12-18-38 15-38 40-32z" />
+                        <!-- Nordrhein-Westfalen -->
+                        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M68 220l72 10 42 28 8 52-32 38-62 12-58-28-18-52 48-60z" />
+                        <!-- Hessen -->
+                        <path class="land-path" data-state="Hesse" d="M192 310l42 10 32 50-18 70-58 22-38-38 8-62 32-52z" />
+                        <!-- Thüringen -->
+                        <path class="land-path" data-state="Thuringe" d="M272 320l62 10 32 38-28 42-58 8-42-28 10-45 24-25z" />
+                        <!-- Sachsen -->
+                        <path class="land-path" data-state="Saxe" d="M370 312l85-8 58 42-18 52-82 18-42-32 12-42-13-30z" />
+                        <!-- Rheinland-Pfalz -->
+                        <path class="land-path" data-state="Rhénanie-Palatinat" d="M62 360l52 18 35 48-22 52-62 18-28-42 25-94z" />
+                        <!-- Saarland -->
+                        <path class="land-path" data-state="Sarre" d="M52 460l32 8 10 32-28 18-20-22z" />
+                        <!-- Baden-Württemberg -->
+                        <path class="land-path" data-state="Bade-Wurtemberg" d="M115 480l62 10 35 82-18 95-72 18-42-72 35-133z" />
+                        <!-- Bayern -->
+                        <path class="land-path" data-state="Bavière" d="M225 420l85-18 92 60 18 120-112 110-110-38 10-112 32-68-15-154z" />
+                    </svg>
+                    <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
+                </div>
+
+                <!-- Boutons de filtres par Land -->
+                <div class="md:col-span-2">
+                    <p class="text-xs text-slate-400 mb-3">Sélectionnez une région sur la carte ou dans la liste :</p>
+                    <div id="statesFilterContainer" class="flex flex-wrap gap-2">
+                        <!-- Injecté dynamiquement par JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille des résultats -->
+        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Injecté dynamiquement par JavaScript -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
