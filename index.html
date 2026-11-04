@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recherche de plaques d'immatriculation allemandes</title>
+    <title>Kfz-Kennzeichen Finder - Plaques Allemandes</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
-    <div class="max-w-4xl mx-auto px-4 py-10">
-        <header class="text-center mb-10">
+    <div class="max-w-5xl mx-auto px-4 py-10">
+        <header class="text-center mb-8">
             <h1 class="text-3xl font-bold tracking-tight text-slate-900 mb-2">Kfz-Kennzeichen Finder</h1>
-            <p class="text-slate-600">Recherchez une ville, un Land ou un préfixe d'immatriculation allemand.</p>
+            <p class="text-slate-600">Explorez les plaques d'immatriculation allemandes par recherche textuelle ou par Land.</p>
         </header>
 
         <!-- Barre de recherche -->
-        <div class="mb-8">
+        <div class="mb-6">
             <input type="text" id="searchInput" placeholder="Ex: M, Berlin, Bavière, BN..." 
-                class="w-full px-4 py-3 rounded-xl border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+                class="w-full px-4 py-3 rounded-xl border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg bg-white">
+        </div>
+
+        <!-- Navigation rapide par Länder (Carte géographique interactive schématique) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-8">
+            <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Filtrer par Land (Région) :</h2>
+            <div id="statesFilterContainer" class="flex flex-wrap gap-2">
+                <!-- Boutons générés dynamiquement -->
+            </div>
         </div>
 
         <!-- Grille des résultats -->

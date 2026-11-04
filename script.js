@@ -1,14 +1,55 @@
 let platesData = [];
+let selectedState = '';
 
 // Chargement des données JSON
 async function loadData() {
     try {
         const response = await fetch('data.json');
         platesData = await response.json();
+        initStatesFilter();
         displayResults(platesData);
     } catch (error) {
         console.error("Erreur lors du chargement des données :", error);
     }
+}
+
+// Initialisation des boutons de filtres par Land
+function initStatesFilter() {
+    const container = document.getElementById('statesFilterContainer');
+    // Récupérer la liste unique des Länder
+    const states = [...new Set(platesData.map(item => item.state))].sort();
+
+    // Bouton "Tous"
+    const allBtn = document.createElement('button');
+    allBtn.className = 'px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white';
+    allBtn.textContent = 'Tous les Länder';
+    allBtn.onclick = () => {
+        selectedState = '';
+        updateActiveFilterButton(allBtn);
+        filterData();
+    };
+    container.appendChild(allBtn);
+
+    states.forEach(state => {
+        const btn = document.createElement('button');
+        btn.className = 'px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors bg-slate-100 text-slate-700 hover:bg-slate-200';
+        btn.textContent = state;
+        btn.onclick = () => {
+            selectedState = state;
+            updateActiveFilterButton(btn);
+            filterData();
+        };
+        container.appendChild(btn);
+    });
+}
+
+// Gestion visuelle du bouton actif
+function updateActiveFilterButton(activeBtn) {
+    const container = document.getElementById('statesFilterContainer');
+    Array.from(container.children).forEach(child => {
+        child.className = 'px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors bg-slate-100 text-slate-700 hover:bg-slate-200';
+    });
+    activeBtn.className = 'px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white';
 }
 
 // Affichage des cartes de plaques
@@ -47,17 +88,27 @@ function displayResults(data) {
     });
 }
 
-// Gestion de la recherche en temps réel
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase().trim();
-    const filtered = platesData.filter(item => 
-        item.prefix.toLowerCase().includes(term) ||
-        item.city.toLowerCase().includes(term) ||
-        item.state.toLowerCase().includes(term) ||
-        item.region.toLowerCase().includes(term)
-    );
+// Filtrage combiné (Recherche textuelle + Filtre par Land)
+function filterData() {
+    const term = document.getElementById('searchInput').value.toLowerCase().trim();
+    
+    const filtered = platesData.filter(item => {
+        const matchesSearch = 
+            item.prefix.toLowerCase().includes(term) ||
+            item.city.toLowerCase().includes(term) ||
+            item.state.toLowerCase().includes(term) ||
+            item.region.toLowerCase().includes(term);
+        
+        const matchesState = selectedState === '' || item.state === selectedState;
+
+        return matchesSearch && matchesState;
+    });
+
     displayResults(filtered);
-});
+}
+
+// Écouteur sur la barre de recherche
+document.getElementById('searchInput').addEventListener('input', filterData);
 
 // Lancement au chargement
 loadData();

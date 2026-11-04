@@ -1,86 +1,25 @@
 [
-  {
-    "prefix": "B",
-    "city": "Berlin",
-    "state": "Berlin",
-    "region": "Capitale / Ville-État"
-  },
-  {
-    "prefix": "M",
-    "city": "München (Munich)",
-    "state": "Bavière (Bayern)",
-    "region": "Haute-Bavière"
-  },
-  {
-    "prefix": "HH",
-    "city": "Hamburg",
-    "state": "Hambourg",
-    "region": "Ville-État"
-  },
-  {
-    "prefix": "K",
-    "city": "Köln (Cologne)",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "District de Cologne"
-  },
-  {
-    "prefix": "F",
-    "city": "Frankfurt am Main",
-    "state": "Hesse",
-    "region": "District de Darmstadt"
-  },
-  {
-    "prefix": "S",
-    "city": "Stuttgart",
-    "state": "Bade-Wurtemberg",
-    "region": "District de Stuttgart"
-  },
-  {
-    "prefix": "D",
-    "city": "Düsseldorf",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "District de Düsseldorf"
-  },
-  {
-    "prefix": "BN",
-    "city": "Bonn",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "District de Cologne"
-  },
-  {
-    "prefix": "AC",
-    "city": "Aachen (Aix-la-Chapelle)",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "Région urbaine d'Aix-la-Chapelle"
-  },
-  {
-    "prefix": "DO",
-    "city": "Dortmund",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "District d'Arnsberg"
-  },
-  {
-    "prefix": "E",
-    "city": "Essen",
-    "state": "Rhénanie-du-Nord-Westphalie",
-    "region": "District de Düsseldorf"
-  },
-  {
-    "prefix": "HB",
-    "city": "Brême",
-    "state": "Brême (Hansestadt Bremen)",
-    "region": "Ville-État"
-  },
-  {
-    "prefix": "L",
-    "city": "Leipzig",
-    "state": "Saxe",
-    "region": "District de Leipzig"
-  },
-  {
-    "prefix": "N",
-    "city": "Nürnberg (Nuremberg)",
-    "state": "Bavière (Bayern)",
-    "region": "Moyenne-Franconie"
-  }
+  { "prefix": "B", "city": "Berlin", "state": "Berlin", "region": "Capitale / Ville-État" },
+  { "prefix": "M", "city": "München (Munich)", "state": "Bavière", "region": "Haute-Bavière" },
+  { "prefix": "N", "city": "Nürnberg (Nuremberg)", "state": "Bavière", "region": "Moyenne-Franconie" },
+  { "prefix": "A", "city": "Augsburg", "state": "Bavière", "region": "Souabe" },
+  { "prefix": "HH", "city": "Hamburg", "state": "Hambourg", "region": "Ville-État" },
+  { "prefix": "K", "city": "Köln (Cologne)", "state": "Rhénanie-du-Nord-Westphalie", "region": "District de Cologne" },
+  { "prefix": "D", "city": "Düsseldorf", "state": "Rhénanie-du-Nord-Westphalie", "region": "District de Düsseldorf" },
+  { "prefix": "BN", "city": "Bonn", "state": "Rhénanie-du-Nord-Westphalie", "region": "District de Cologne" },
+  { "prefix": "AC", "city": "Aachen (Aix-la-Chapelle)", "state": "Rhénanie-du-Nord-Westphalie", "region": "Région urbaine d'Aix-la-Chapelle" },
+  { "prefix": "DO", "city": "Dortmund", "state": "Rhénanie-du-Nord-Westphalie", "region": "District d'Arnsberg" },
+  { "prefix": "E", "city": "Essen", "state": "Rhénanie-du-Nord-Westphalie", "region": "District de Düsseldorf" },
+  { "prefix": "F", "city": "Frankfurt am Main", "state": "Hesse", "region": "District de Darmstadt" },
+  { "prefix": "WI", "city": "Wiesbaden", "state": "Hesse", "region": "District de Darmstadt" },
+  { "prefix": "S", "city": "Stuttgart", "state": "Bade-Wurtemberg", "region": "District de Stuttgart" },
+  { "prefix": "KA", "city": "Karlsruhe", "state": "Bade-Wurtemberg", "region": "District de Karlsruhe" },
+  { "prefix": "HB", "city": "Brême", "state": "Brême", "region": "Ville-État" },
+  { "prefix": "L", "city": "Leipzig", "state": "Saxe", "region": "District de Leipzig" },
+  { "prefix": "DR", "city": "Dresden (Dresde)", "state": "Saxe", "region": "District de Dresde" },
+  { "prefix": "H", "city": "Hannover (Hanovre)", "state": "Basse-Saxe", "region": "Région de Hanovre" },
+  { "prefix": "BS", "city": "Braunschweig (Brunswick)", "state": "Basse-Saxe", "region": "District de Brunswick" },
+  { "prefix": "Kiel", "city": "Kiel", "state": "Schleswig-Holstein", "region": "Capitale de Land" },
+  { "prefix": "MZ", "city": "Mainz (Mayence)", "state": "Rhénanie-Palatinat", "region": "District de Mayence" },
+  { "prefix": "SB", "city": "Saarbrücken", "state": "Sarre", "region": "Région de Sarrebruck" }
 ]
