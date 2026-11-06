@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
 
-    <!-- Icône écran d'accueil iOS -->
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/512px-Flag_of_Germany.svg.png">
+    <!-- Nom court affiché sous l'icône iOS -->
     <meta name="apple-mobile-web-app-title" content="Kfz Finder">
     <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Icône officielle iOS embarquée (PNG Drapeau Allemand en Base64) -->
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAP0lEQVR42u3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwZxg8AAE4n31BAAAAAElFTkSuQmCC">
 
     <!-- Favicon classique -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23000'/><rect y='1' width='3' height='1' fill='%23D00'/><rect y='2' width='3' height='1' fill='%23FFCE00'/></svg>">
@@ -18,21 +20,19 @@
         .land-path {
             fill: #334155;
             stroke: #1e293b;
-            stroke-width: 1;
-            transition: all 0.25s stroke, all 0.25s fill;
+            stroke-width: 1.2;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
         .land-path:hover {
             fill: #3b82f6;
             stroke: #93c5fd;
-            stroke-width: 1.5;
-            filter: drop-shadow(0px 0px 6px rgba(59, 130, 246, 0.5));
+            stroke-width: 2;
         }
         .land-path.active {
             fill: #2563eb;
             stroke: #60a5fa;
-            stroke-width: 2;
-            filter: drop-shadow(0px 0px 8px rgba(37, 99, 235, 0.8));
+            stroke-width: 2.5;
         }
     </style>
 </head>
@@ -84,41 +84,41 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                <!-- Carte SVG aux contours géographiques réalistes -->
+                <!-- Carte SVG aux tracés lissés -->
                 <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 shadow-inner">
-                    <svg id="germanyMap" viewBox="0 0 590 800" class="w-full max-w-[210px] h-auto drop-shadow-md">
+                    <svg id="germanyMap" viewBox="0 0 600 800" class="w-full max-w-[210px] h-auto">
                         <!-- Schleswig-Holstein -->
-                        <path class="land-path" data-state="Schleswig-Holstein" d="M228 12l18 3 15 22 25 10 32-1 12 18-5 28-22 17-25-10-38 12-20-15 8-28-20-12 20-44z" />
+                        <path class="land-path" data-state="Schleswig-Holstein" d="M 230 20 C 270 20, 280 40, 290 80 C 260 90, 240 80, 210 70 Z" />
                         <!-- Mecklemburg-Vorpommern -->
-                        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M305 64l48-12 65 18 85 2 28 35-22 28-58 12-42-18-35 8-45-18-28-35 4-20z" />
+                        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M 300 70 C 370 60, 480 70, 510 110 C 440 140, 370 120, 310 90 Z" />
                         <!-- Niedersachsen -->
-                        <path class="land-path" data-state="Basse-Saxe" d="M125 110l60-18 43 28 30-18 38 18 8 45-28 38 12 38-35 25-48-12-25 18-42-18-25 28-40-22-15-42 32-38-15-32z" />
+                        <path class="land-path" data-state="Basse-Saxe" d="M 130 110 C 210 90, 280 120, 300 170 C 230 200, 150 180, 110 150 Z" />
                         <!-- Bremen -->
-                        <path class="land-path" data-state="Brême" d="M188 152l12-8 8 10-10 12z" />
+                        <path class="land-path" data-state="Brême" d="M 200 145 C 210 140, 220 150, 210 160 Z" />
                         <!-- Hamburg -->
-                        <path class="land-path" data-state="Hambourg" d="M262 118l18 2 5 12-15 10-12-10z" />
+                        <path class="land-path" data-state="Hambourg" d="M 275 125 C 285 120, 295 130, 285 140 Z" />
                         <!-- Brandenburg -->
-                        <path class="land-path" data-state="Brandebourg" d="M380 152l58-10 42 38 18 70-38 52-62 10-32-32 8-52 18-28-12-48z" />
+                        <path class="land-path" data-state="Brandebourg" d="M 380 150 C 450 140, 500 200, 470 280 C 400 280, 380 230, 370 180 Z" />
                         <!-- Berlin -->
-                        <path class="land-path" data-state="Berlin" d="M430 212l22-2 8 18-18 12-15-12z" />
+                        <path class="land-path" data-state="Berlin" d="M 430 205 C 445 205, 445 225, 430 225 Z" />
                         <!-- Sachsen-Anhalt -->
-                        <path class="land-path" data-state="Saxe-Anhalt" d="M312 212l42 12 22 48-18 42-45 18-38-12-18-38 15-38 40-32z" />
+                        <path class="land-path" data-state="Saxe-Anhalt" d="M 310 200 C 370 200, 370 260, 340 310 C 280 300, 270 240, 300 210 Z" />
                         <!-- Nordrhein-Westfalen -->
-                        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M68 220l72 10 42 28 8 52-32 38-62 12-58-28-18-52 48-60z" />
+                        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M 60 210 C 140 210, 180 260, 160 340 C 90 350, 40 290, 60 220 Z" />
                         <!-- Hessen -->
-                        <path class="land-path" data-state="Hesse" d="M192 310l42 10 32 50-18 70-58 22-38-38 8-62 32-52z" />
+                        <path class="land-path" data-state="Hesse" d="M 180 320 C 240 320, 250 410, 210 470 C 150 450, 160 370, 180 320 Z" />
                         <!-- Thüringen -->
-                        <path class="land-path" data-state="Thuringe" d="M272 320l62 10 32 38-28 42-58 8-42-28 10-45 24-25z" />
+                        <path class="land-path" data-state="Thuringe" d="M 260 330 C 330 330, 350 380, 310 420 C 240 420, 240 370, 260 330 Z" />
                         <!-- Sachsen -->
-                        <path class="land-path" data-state="Saxe" d="M370 312l85-8 58 42-18 52-82 18-42-32 12-42-13-30z" />
+                        <path class="land-path" data-state="Saxe" d="M 370 310 C 470 300, 510 360, 430 400 C 360 400, 350 340, 370 310 Z" />
                         <!-- Rheinland-Pfalz -->
-                        <path class="land-path" data-state="Rhénanie-Palatinat" d="M62 360l52 18 35 48-22 52-62 18-28-42 25-94z" />
+                        <path class="land-path" data-state="Rhénanie-Palatinat" d="M 60 360 C 130 360, 150 440, 100 500 C 40 480, 40 400, 60 360 Z" />
                         <!-- Saarland -->
-                        <path class="land-path" data-state="Sarre" d="M52 460l32 8 10 32-28 18-20-22z" />
+                        <path class="land-path" data-state="Sarre" d="M 50 470 C 80 470, 80 500, 50 500 Z" />
                         <!-- Baden-Württemberg -->
-                        <path class="land-path" data-state="Bade-Wurtemberg" d="M115 480l62 10 35 82-18 95-72 18-42-72 35-133z" />
+                        <path class="land-path" data-state="Bade-Wurtemberg" d="M 110 500 C 200 490, 200 620, 150 710 C 80 680, 80 560, 110 500 Z" />
                         <!-- Bayern -->
-                        <path class="land-path" data-state="Bavière" d="M225 420l85-18 92 60 18 120-112 110-110-38 10-112 32-68-15-154z" />
+                        <path class="land-path" data-state="Bavière" d="M 230 440 C 350 430, 450 500, 410 730 C 280 750, 200 640, 230 440 Z" />
                     </svg>
                     <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
                 </div>
