@@ -1,6 +1,27 @@
 let platesData = [];
 let selectedState = '';
 
+// Dictionnaire des drapeaux SVG officiels par Land
+const stateFlags = {
+    'bw': 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Flag_of_Baden-W%C3%BCrttemberg.svg',
+    'bayern': 'https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_Bavaria_%28striped%29.svg',
+    'berlin': 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Flag_of_Berlin.svg',
+    'brandenburg': 'https://upload.wikimedia.org/wikipedia/commons/1/18/Flag_of_Brandenburg.svg',
+    'bremen': 'https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Bremen.svg',
+    'hamburg': 'https://upload.wikimedia.org/wikipedia/commons/7/74/Flag_of_Hamburg.svg',
+    'hessen': 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Hesse.svg',
+    'mv': 'https://upload.wikimedia.org/wikipedia/commons/3/30/Flag_of_Mecklenburg-Western_Pomerania.svg',
+    'niedersachsen': 'https://upload.wikimedia.org/wikipedia/commons/8/81/Flag_of_Lower_Saxony.svg',
+    'nrw': 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Flag_of_North_Rhine-Westphalia.svg',
+    'rlp': 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Flag_of_Rhineland-Palatinate.svg',
+    'saarland': 'https://upload.wikimedia.org/wikipedia/commons/4/44/Flag_of_Saarland.svg',
+    'sachsen': 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Flag_of_Saxony.svg',
+    'st': 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Flag_of_Saxony-Anhalt.svg',
+    'sh': 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Schleswig-Holstein.svg',
+    'thueringen': 'https://upload.wikimedia.org/wikipedia/commons/0/07/Flag_of_Thuringia.svg',
+    'bund': 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg'
+};
+
 async function loadData() {
     loadSVGMap();
 
@@ -203,6 +224,19 @@ function openPlateModal(item) {
     document.getElementById('modalLandId').textContent = item.landId ? item.landId.toUpperCase() : '-';
     document.getElementById('modalRegion').textContent = item.region;
 
+    // Gestion de l'affichage du drapeau du Land
+    const flagImg = document.getElementById('modalFlag');
+    const landKey = (item.landId || '').toLowerCase().trim();
+    if (flagImg) {
+        if (stateFlags[landKey]) {
+            flagImg.src = stateFlags[landKey];
+            flagImg.alt = `Drapeau ${item.state}`;
+            flagImg.classList.remove('hidden');
+        } else {
+            flagImg.classList.add('hidden');
+        }
+    }
+
     const filterBtn = document.getElementById('modalFilterBtn');
     if (filterBtn) {
         filterBtn.onclick = () => {
@@ -230,7 +264,6 @@ function closePlateModal() {
     }, 200);
 }
 
-// Écouteurs pour fermer la modale au clic sur le fond ou avec Échap
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closePlateModal();
 });
@@ -264,7 +297,6 @@ function displayResults(data) {
         const card = document.createElement('div');
         card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group cursor-pointer';
         
-        // Clic sur la carte -> Ouvre la modale en grand
         card.onclick = () => openPlateModal(item);
 
         card.innerHTML = `

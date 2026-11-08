@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <!-- Informations détaillées sans coupure -->
+            <!-- Informations détaillées avec Drapeau -->
             <div class="space-y-4">
                 <div>
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Ville / Zone administrative</span>
@@ -82,11 +82,14 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Land (État)</span>
-                        <p id="modalState" class="text-base font-bold text-blue-400 mt-0.5"></p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <img id="modalFlag" class="w-7 h-4.5 object-cover rounded shadow-sm border border-slate-700 hidden" alt="Drapeau du Land">
+                            <p id="modalState" class="text-base font-bold text-blue-400"></p>
+                        </div>
                     </div>
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Code Land</span>
-                        <p id="modalLandId" class="text-base font-semibold text-slate-300 font-mono mt-0.5"></p>
+                        <p id="modalLandId" class="text-base font-semibold text-slate-300 font-mono mt-1"></p>
                     </div>
                 </div>
                 <div>
