@@ -137,7 +137,6 @@ function highlightMapState(state) {
         let isMatch = false;
 
         if (stateClean === '') {
-            // Quand "Tous les Länder" est sélectionné, toute la carte s'allume en bleu
             isMatch = true;
         } else {
             if (landId === 'bw' || stateClean.includes('bade') || stateClean.includes('baden')) {
@@ -193,6 +192,56 @@ function highlightMapState(state) {
     });
 }
 
+function openPlateModal(item) {
+    const modal = document.getElementById('plateModal');
+    const content = document.getElementById('modalContent');
+    if (!modal || !content) return;
+
+    document.getElementById('modalPrefix').textContent = item.prefix;
+    document.getElementById('modalCity').textContent = item.city;
+    document.getElementById('modalState').textContent = item.state;
+    document.getElementById('modalLandId').textContent = item.landId ? item.landId.toUpperCase() : '-';
+    document.getElementById('modalRegion').textContent = item.region;
+
+    const filterBtn = document.getElementById('modalFilterBtn');
+    if (filterBtn) {
+        filterBtn.onclick = () => {
+            selectState(item.state);
+            closePlateModal();
+        };
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closePlateModal() {
+    const modal = document.getElementById('plateModal');
+    const content = document.getElementById('modalContent');
+    if (!modal || !content) return;
+
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 200);
+}
+
+// Écouteurs pour fermer la modale au clic sur le fond ou avec Échap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePlateModal();
+});
+
+const modalContainer = document.getElementById('plateModal');
+if (modalContainer) {
+    modalContainer.addEventListener('click', (e) => {
+        if (e.target === modalContainer) closePlateModal();
+    });
+}
+
 function displayResults(data) {
     const grid = document.getElementById('resultsGrid');
     const countLabel = document.getElementById('resultCount');
@@ -215,7 +264,8 @@ function displayResults(data) {
         const card = document.createElement('div');
         card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group cursor-pointer';
         
-        card.onclick = () => selectState(item.state);
+        // Clic sur la carte -> Ouvre la modale en grand
+        card.onclick = () => openPlateModal(item);
 
         card.innerHTML = `
             <div class="flex border-2 border-slate-700 rounded-xl overflow-hidden bg-white shadow-md shrink-0 w-32 h-16 items-center group-hover:scale-105 transition-transform">
