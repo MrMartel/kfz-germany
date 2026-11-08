@@ -3,80 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .land-path {
-            fill: #334155;
-            stroke: #1e293b;
-            stroke-width: 1.5;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .land-path:hover {
-            fill: #3b82f6;
-            stroke: #93c5fd;
-            stroke-width: 2;
-        }
-        .land-path.active {
-            fill: #2563eb;
-            stroke: #60a5fa;
-            stroke-width: 2.5;
-        }
-    </style>
+    <title>Kfz-Kennzeichen Finder</title>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="style.css"> <!-- Si vos styles sont séparés, sinon adaptez avec votre tag <style> -->
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
-    <div class="max-w-5xl mx-auto px-4 py-10">
+<body>
+
+    <header class="header-container">
+        <!-- Image de plaque en haut de page -->
+        <img src="image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="hero-plate">
         
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
-            <p class="text-slate-400 text-sm">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
-        </header>
+        <h1>Kfz-Kennzeichen Finder</h1>
+        <p class="subtitle">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+    </header>
 
-        <div class="max-w-2xl mx-auto mb-6">
-            <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." class="w-full pl-4 pr-4 py-3.5 rounded-2xl bg-slate-800 text-white border border-slate-700 mb-2">
-            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
-                <input type="checkbox" id="exactMatchCheckbox" checked class="w-4 h-4 text-blue-600 rounded">
-                <span>Préfixe exact uniquement</span>
-            </label>
-        </div>
-
-        <div class="bg-slate-800/60 rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                
-                <!-- CARTE SVG -->
-                <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                    <svg id="germanyMap" version="1.0" viewBox="0 0 600 850" class="w-full max-w-[210px] h-auto">
-                        <g transform="translate(-10,-10)">
-                            <path class="land-path" data-state="Schleswig-Holstein" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Hambourg" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Basse-Saxe" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Brême" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Hesse" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Rhénanie-Palatinat" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Bade-Wurtemberg" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Bavière" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Sarre" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Berlin" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Brandebourg" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Saxe-Anhalt" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Saxe" d="COPIER_LE_TRACÉ_ICI" />
-                            <path class="land-path" data-state="Thuringe" d="COPIER_LE_TRACÉ_ICI" />
-                        </g>
-                    </svg>
-                    <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
-                </div>
-
-                <div class="md:col-span-2">
-                    <div id="statesFilterContainer" class="flex flex-wrap gap-2"></div>
-                </div>
+    <main class="container">
+        <!-- Section Barre de recherche -->
+        <section class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville...">
             </div>
-        </div>
+            <div class="checkbox-box">
+                <label for="exactPrefix">
+                    <input type="checkbox" id="exactPrefix">
+                    Préfixe exact uniquement
+                </label>
+            </div>
+        </section>
 
-        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </div>
+        <!-- Section Filtres & Carte interactive -->
+        <section class="content-section">
+            <!-- Carte SVG de l'Allemagne -->
+            <div class="map-container">
+                <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg"></object>
+                <div class="map-caption">Toutes les régions</div>
+            </div>
+
+            <!-- Filtres par Länder -->
+            <div class="laender-filters" id="laenderFilters">
+                <button class="filter-btn active" data-land="all">
+                    <span class="flag-icon">🇩🇪</span> Tous les Länder
+                </button>
+                <button class="filter-btn" data-land="Bade-Wurtemberg">Bade-Wurtemberg</button>
+                <button class="filter-btn" data-land="Basse-Saxe">Basse-Saxe</button>
+                <button class="filter-btn" data-land="Bavière">Bavière</button>
+                <button class="filter-btn" data-land="Berlin">Berlin</button>
+                <button class="filter-btn" data-land="Brandebourg">Brandebourg</button>
+                <button class="filter-btn" data-land="Brême">Brême</button>
+                <button class="filter-btn" data-land="Fédéral">Fédéral</button>
+                <button class="filter-btn" data-land="Hambourg">Hambourg</button>
+                <button class="filter-btn" data-land="Hesse">Hesse</button>
+                <button class="filter-btn" data-land="Mecklembourg-Poméranie-Occidentale">Mecklembourg-Poméranie-Occidentale</button>
+                <button class="filter-btn" data-land="Rhénanie-Palatinat">Rhénanie-Palatinat</button>
+                <button class="filter-btn" data-land="Rhénanie-du-Nord-Westphalie">Rhénanie-du-Nord-Westphalie</button>
+                <button class="filter-btn" data-land="Sarre">Sarre</button>
+                <button class="filter-btn" data-land="Saxe">Saxe</button>
+                <button class="filter-btn" data-land="Saxe-Anhalt">Saxe-Anhalt</button>
+                <button class="filter-btn" data-land="Schleswig-Holstein">Schleswig-Holstein</button>
+                <button class="filter-btn" data-land="Thuringe">Thuringe</button>
+            </div>
+        </section>
+
+        <!-- Grille de résultats des plaques -->
+        <section class="results-grid" id="resultsGrid">
+            <!-- Injecté dynamiquement par script.js -->
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
