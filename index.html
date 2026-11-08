@@ -5,45 +5,258 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css"> <!-- Si vos styles sont séparés, sinon adaptez avec votre tag <style> -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .hero-plate {
+            max-width: 420px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 9999px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        #searchInput:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            accent-color: #3b82f6;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .map-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .map-wrapper object {
+            width: 100%;
+            max-height: 380px;
+            pointer-events: auto;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        .filters-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background-color: #334155;
+            color: #cbd5e1;
+            border: none;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #475569;
+            color: #ffffff;
+        }
+
+        .filter-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Cartes de résultats injectées par script.js */
+        .card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .card-plate {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-weight: 900;
+            font-size: 1.5rem;
+            min-width: 70px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .card-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .card-info .land {
+            font-size: 0.8rem;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .card-info .details {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+    </style>
 </head>
 <body>
 
-    <header class="header-container">
-        <!-- Image de plaque en haut de page -->
-        <img src="image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="hero-plate">
-        
+    <header>
+        <img src="image_accueil.png" alt="Plaque d'immatriculation allemande" class="hero-plate">
         <h1>Kfz-Kennzeichen Finder</h1>
-        <p class="subtitle">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+        <p>Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
     </header>
 
-    <main class="container">
-        <!-- Section Barre de recherche -->
-        <section class="search-section">
-            <div class="search-box">
+    <main>
+        <div class="search-container">
+            <div class="search-input-wrapper">
                 <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville...">
             </div>
-            <div class="checkbox-box">
-                <label for="exactPrefix">
-                    <input type="checkbox" id="exactPrefix">
-                    Préfixe exact uniquement
-                </label>
-            </div>
-        </section>
+            <label class="checkbox-container" for="exactPrefix">
+                <input type="checkbox" id="exactPrefix">
+                Préfixe exact uniquement
+            </label>
+        </div>
 
-        <!-- Section Filtres & Carte interactive -->
-        <section class="content-section">
-            <!-- Carte SVG de l'Allemagne -->
-            <div class="map-container">
+        <div class="dashboard-grid">
+            <div class="map-wrapper">
                 <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg"></object>
-                <div class="map-caption">Toutes les régions</div>
+                <span class="map-legend">Toutes les régions</span>
             </div>
 
-            <!-- Filtres par Länder -->
-            <div class="laender-filters" id="laenderFilters">
-                <button class="filter-btn active" data-land="all">
-                    <span class="flag-icon">🇩🇪</span> Tous les Länder
-                </button>
+            <div class="filters-wrapper" id="laenderFilters">
+                <button class="filter-btn active" data-land="all">🇩🇪 Tous les Länder</button>
                 <button class="filter-btn" data-land="Bade-Wurtemberg">Bade-Wurtemberg</button>
                 <button class="filter-btn" data-land="Basse-Saxe">Basse-Saxe</button>
                 <button class="filter-btn" data-land="Bavière">Bavière</button>
@@ -62,12 +275,9 @@
                 <button class="filter-btn" data-land="Schleswig-Holstein">Schleswig-Holstein</button>
                 <button class="filter-btn" data-land="Thuringe">Thuringe</button>
             </div>
-        </section>
+        </div>
 
-        <!-- Grille de résultats des plaques -->
-        <section class="results-grid" id="resultsGrid">
-            <!-- Injecté dynamiquement par script.js -->
-        </section>
+        <div class="results-grid" id="resultsGrid"></div>
     </main>
 
     <script src="script.js"></script>
