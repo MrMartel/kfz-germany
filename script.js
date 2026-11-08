@@ -112,11 +112,34 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
-    const stateKey = (state || '').toLowerCase().trim();
+    // Définition de motifs d'expressions régulières stricts (\b = mot entier) pour chaque Land
+    const statePatterns = {
+        'bade-wurtemberg': [/\bde[-_]?bw\b/i, /\bbw\b/i, /\bbaden\b/i, /\bw[uüa]rt[t]?emberg\b/i],
+        'bavière': [/\bde[-_]?by\b/i, /\bby\b/i, /\bbayern\b/i, /\bbavaria\b/i, /\bbavi[eè]re\b/i],
+        'berlin': [/\bde[-_]?be\b/i, /\bbe\b/i, /\bberlin\b/i],
+        'brandebourg': [/\bde[-_]?bb\b/i, /\bbb\b/i, /\bbrandenburg\b/i, /\bbrandebourg\b/i],
+        'brême': [/\bde[-_]?hb\b/i, /\bhb\b/i, /\bbremen\b/i, /\bbr[eê]me\b/i],
+        'hambourg': [/\bde[-_]?hh\b/i, /\bhh\b/i, /\bhamburg\b/i, /\bhambourg\b/i],
+        'hesse': [/\bde[-_]?he\b/i, /\bhe\b/i, /\bhessen\b/i, /\bhesse\b/i],
+        'mecklemburg-poméranie-occidentale': [/\bde[-_]?mv\b/i, /\bmv\b/i, /\bmecklenburg\b/i, /\bvorpommern\b/i, /\bpomeranie\b/i],
+        'mecklembourg-poméranie-occidentale': [/\bde[-_]?mv\b/i, /\bmv\b/i, /\bmecklenburg\b/i, /\bvorpommern\b/i, /\bpomeranie\b/i],
+        'basse-saxe': [/\bde[-_]?ni\b/i, /\bni\b/i, /\bniedersachsen\b/i, /\bbasse[-_]?saxe\b/i],
+        'rhénanie-du-nord-westphalie': [/\bde[-_]?nw\b/i, /\bnw\b/i, /\bnrw\b/i, /\bnordrhein\b/i, /\bwestfalen\b/i],
+        'rhénanie-palatinat': [/\bde[-_]?rp\b/i, /\brp\b/i, /\brlp\b/i, /\brheinland\b/i, /\bpfalz\b/i, /\bpalatinat\b/i],
+        'sarre': [/\bde[-_]?sl\b/i, /\bsl\b/i, /\bsaarland\b/i, /\bsarre\b/i],
+        'saxe': [/\bde[-_]?sn\b/i, /\bsn\b/i, /\bsachsen\b/i, /\bsaxe\b/i],
+        'saxe-anhalt': [/\bde[-_]?st\b/i, /\bst\b/i, /\banhalt\b/i],
+        'schleswig-holstein': [/\bde[-_]?sh\b/i, /\bsh\b/i, /\bschleswig\b/i, /\bholstein\b/i],
+        'thuringe': [/\bde[-_]?th\b/i, /\bth\b/i, /\bth[uü]ringen\b/i, /\bthuringe\b/i],
+        'fédéral': [/\bbund\b/i]
+    };
+
+    const key = (state || '').toLowerCase().trim();
+    const patterns = statePatterns[key] || [];
+
     const shapes = svg.querySelectorAll('path, polygon, rect, circle, use');
 
     shapes.forEach(el => {
-        // Concaténation des identifiants et attributs de l'élément jusqu'à la racine SVG
         let attrString = '';
         let current = el;
         while (current && current !== svg && current.tagName !== 'svg') {
@@ -131,65 +154,17 @@ function highlightMapState(state) {
             current = current.parentElement;
         }
 
-        const str = attrString.toLowerCase();
         let isMatch = false;
 
-        if (stateKey !== '') {
-            switch (stateKey) {
-                case 'bade-wurtemberg':
-                case 'bade-würtemberg':
-                    isMatch = str.includes('bw') || str.includes('baden') || str.includes('wurt') || str.includes('würt') || str.includes('wuert');
-                    break;
-                case 'saxe':
-                    isMatch = (str.includes('sn') || str.includes('sachsen') || str.includes('saxe')) &&
-                              !str.includes('nieder') && !str.includes('basse') && !str.includes('anhalt');
-                    break;
-                case 'basse-saxe':
-                    isMatch = str.includes('ni') || str.includes('niedersachsen') || str.includes('basse-saxe') || str.includes('lower-saxony');
-                    break;
-                case 'saxe-anhalt':
-                    isMatch = str.includes('st') || str.includes('anhalt');
-                    break;
-                case 'rhénanie-du-nord-westphalie':
-                    isMatch = str.includes('nrw') || str.includes('nw') || str.includes('nordrhein') || str.includes('westfalen');
-                    break;
-                case 'rhénanie-palatinat':
-                    isMatch = str.includes('rlp') || str.includes('rp') || str.includes('pfalz') || str.includes('palatinat');
-                    break;
-                case 'bavière':
-                    isMatch = str.includes('by') || str.includes('bayern') || str.includes('bavaria') || str.includes('bavière') || str.includes('baviere');
-                    break;
-                case 'berlin':
-                    isMatch = str.includes('be') || str.includes('berlin');
-                    break;
-                case 'brandebourg':
-                    isMatch = str.includes('bb') || str.includes('brandenburg') || str.includes('brandebourg');
-                    break;
-                case 'brême':
-                    isMatch = str.includes('hb') || str.includes('bremen') || str.includes('brême') || str.includes('breme');
-                    break;
-                case 'hambourg':
-                    isMatch = str.includes('hh') || str.includes('hamburg') || str.includes('hambourg');
-                    break;
-                case 'hesse':
-                    isMatch = str.includes('he') || str.includes('hessen') || str.includes('hesse');
-                    break;
-                case 'mecklemburg-poméranie-occidentale':
-                case 'mecklembourg-poméranie-occidentale':
-                    isMatch = str.includes('mv') || str.includes('mecklenburg') || str.includes('mecklemburg') || str.includes('vorpommern') || str.includes('pomeranie');
-                    break;
-                case 'sarre':
-                    isMatch = str.includes('sl') || str.includes('saarland') || str.includes('sarre');
-                    break;
-                case 'schleswig-holstein':
-                    isMatch = str.includes('sh') || str.includes('schleswig') || str.includes('holstein');
-                    break;
-                case 'thuringe':
-                    isMatch = str.includes('th') || str.includes('thüringen') || str.includes('thueringen') || str.includes('thuringe');
-                    break;
-                case 'fédéral':
-                    isMatch = str.includes('bund');
-                    break;
+        if (key !== '' && patterns.length > 0) {
+            const hasExclusion = (
+                (key === 'saxe' && (/\banhalt\b/i.test(attrString) || /\bnieder\b/i.test(attrString) || /\bbasse\b/i.test(attrString))) ||
+                (key === 'hesse' && /\brhein\b/i.test(attrString)) ||
+                (key === 'rhénanie-palatinat' && /\bvorpommern\b/i.test(attrString))
+            );
+
+            if (!hasExclusion) {
+                isMatch = patterns.some(pattern => pattern.test(attrString));
             }
         }
 
