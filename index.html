@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
 
-    <!-- Configuration iOS App Web -->
     <meta name="apple-mobile-web-app-title" content="Kfz Finder">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 
-    <!-- Favicon classique -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23000'/><rect y='1' width='3' height='1' fill='%23D00'/><rect y='2' width='3' height='1' fill='%23FFCE00'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -58,85 +56,8 @@
             </p>
         </header>
 
-        <!-- Barre de recherche -->
-        <div class="relative mb-6 max-w-2xl mx-auto">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </span>
-            <input type="text" id="searchInput" placeholder="Rechercher par préfixe (ex: RV, M, B) ou par ville..." 
-                class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-        </div>
-
-        <!-- Section Carte Interactive & Boutons -->
-        <div class="bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
-            <div class="flex items-center justify-between gap-4 mb-4">
-                <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <span class="inline-block w-4 h-3 rounded overflow-hidden flex flex-col border border-slate-600">
-                        <span class="bg-black h-1"></span>
-                        <span class="bg-red-600 h-1"></span>
-                        <span class="bg-yellow-400 h-1"></span>
-                    </span>
-                    Carte interactive de l'Allemagne
-                </h2>
-                <span id="resultCount" class="text-xs text-blue-400 font-semibold bg-blue-950/60 px-3 py-1 rounded-full border border-blue-800/50"></span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                <!-- Carte SVG avec tracés officiels des Länder -->
-                <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 shadow-inner">
-                    <svg id="germanyMap" viewBox="0 0 600 850" class="w-full max-w-[210px] h-auto">
-                        <!-- Schleswig-Holstein -->
-                        <path class="land-path" data-state="Schleswig-Holstein" d="M230 40 L310 45 L320 120 L270 145 L220 120 L210 70 Z" />
-                        <!-- Mecklemburg-Vorpommern -->
-                        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M325 50 L530 80 L520 180 L420 190 L325 125 Z" />
-                        <!-- Niedersachsen -->
-                        <path class="land-path" data-state="Basse-Saxe" d="M140 125 L265 145 L315 130 L320 220 L280 280 L200 280 L180 240 L100 200 Z" />
-                        <!-- Bremen -->
-                        <path class="land-path" data-state="Brême" d="M195 165 L215 165 L215 185 L195 185 Z" />
-                        <!-- Hamburg -->
-                        <path class="land-path" data-state="Hambourg" d="M285 135 L305 135 L305 155 L285 155 Z" />
-                        <!-- Brandenburg -->
-                        <path class="land-path" data-state="Brandebourg" d="M425 195 L530 185 L515 350 L415 340 L395 250 Z" />
-                        <!-- Berlin -->
-                        <path class="land-path" data-state="Berlin" d="M450 245 L475 245 L475 270 L450 270 Z" />
-                        <!-- Sachsen-Anhalt -->
-                        <path class="land-path" data-state="Saxe-Anhalt" d="M325 225 L390 255 L410 335 L335 385 L285 345 L285 285 Z" />
-                        <!-- Nordrhein-Westfalen -->
-                        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M75 210 L175 245 L195 285 L185 395 L95 405 L55 315 Z" />
-                        <!-- Hessen -->
-                        <path class="land-path" data-state="Hesse" d="M190 400 L280 350 L270 480 L230 540 L160 480 L190 430 Z" />
-                        <!-- Thüringen -->
-                        <path class="land-path" data-state="Thuringe" d="M285 390 L330 390 L390 415 L365 495 L275 475 Z" />
-                        <!-- Sachsen -->
-                        <path class="land-path" data-state="Saxe" d="M395 345 L510 355 L530 425 L405 455 L370 420 Z" />
-                        <!-- Rheinland-Pfalz -->
-                        <path class="land-path" data-state="Rhénanie-Palatinat" d="M90 410 L155 485 L145 585 L85 575 L50 495 Z" />
-                        <!-- Saarland -->
-                        <path class="land-path" data-state="Sarre" d="M60 545 L95 545 L85 585 L50 575 Z" />
-                        <!-- Baden-Württemberg -->
-                        <path class="land-path" data-state="Bade-Wurtemberg" d="M140 590 L225 545 L255 650 L200 780 L115 740 L125 640 Z" />
-                        <!-- Bayern -->
-                        <path class="land-path" data-state="Bavière" d="M235 540 L360 500 L445 540 L450 720 L305 810 L210 770 L260 645 Z" />
-                    </svg>
-                    <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
-                </div>
-
-                <!-- Boutons de filtres par Land -->
-                <div class="md:col-span-2">
-                    <p class="text-xs text-slate-400 mb-3">Sélectionnez une région sur la carte ou dans la liste :</p>
-                    <div id="statesFilterContainer" class="flex flex-wrap gap-2">
-                        <!-- Injecté dynamiquement par JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grille des résultats -->
-        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Injecté dynamiquement par JavaScript -->
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+        <!-- Barre de recherche avec option "Correspondance exacte" -->
+        <div class="max-w-2xl mx-auto mb-6">
+            <div class="relative mb-3">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7

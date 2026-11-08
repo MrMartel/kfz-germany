@@ -90,8 +90,8 @@ function displayResults(data) {
     if (data.length === 0) {
         grid.innerHTML = `
             <div class="col-span-2 text-center py-12 bg-slate-800/40 rounded-2xl border border-slate-700/50">
-                <p class="text-slate-300 font-medium">Aucun résultat trouvé pour votre recherche.</p>
-                <p class="text-xs text-slate-500 mt-1">Vérifiez l'orthographe ou le préfixe saisi.</p>
+                <p class="text-slate-300 font-medium">Aucun résultat trouvé.</p>
+                <p class="text-xs text-slate-500 mt-1">Si la case "Préfixe exact" est cochée, essayez de la décocher pour chercher par nom de ville.</p>
             </div>`;
         return;
     }
@@ -122,9 +122,9 @@ function displayResults(data) {
     });
 }
 
-// Algorithme de filtrage intelligent avec tri par pertinence
 function filterData() {
     const term = document.getElementById('searchInput').value.toLowerCase().trim();
+    const isExactMatch = document.getElementById('exactMatchCheckbox').checked;
     
     let filtered = platesData.filter(item => {
         const matchesState = selectedState === '' || item.state === selectedState;
@@ -132,40 +132,22 @@ function filterData() {
 
         if (term === '') return true;
 
-        const prefixMatch = item.prefix.toLowerCase().includes(term);
-        const cityMatch = item.city.toLowerCase().includes(term);
-        const stateMatch = item.state.toLowerCase().includes(term);
-
-        return prefixMatch || cityMatch || stateMatch;
+        if (isExactMatch) {
+            // Mode exact : le préfixe doit correspondre exactement au terme saisi
+            return item.prefix.toLowerCase() === term;
+        } else {
+            // Mode recherche globale
+            return item.prefix.toLowerCase().includes(term) ||
+                   item.city.toLowerCase().includes(term) ||
+                   item.state.toLowerCase().includes(term) ||
+                   item.region.toLowerCase().includes(term);
+        }
     });
-
-    // Tri par ordre de pertinence
-    if (term !== '') {
-        filtered.sort((a, b) => {
-            const prefixA = a.prefix.toLowerCase();
-            const prefixB = b.prefix.toLowerCase();
-            const cityA = a.city.toLowerCase();
-            const cityB = b.city.toLowerCase();
-
-            // 1. Correspondance exacte du préfixe en premier (ex: "K" -> Köln)
-            if (prefixA === term && prefixB !== term) return -1;
-            if (prefixB === term && prefixA !== term) return 1;
-
-            // 2. Le préfixe commence par la recherche (ex: "KA", "KL")
-            if (prefixA.startsWith(term) && !prefixB.startsWith(term)) return -1;
-            if (prefixB.startsWith(term) && !prefixA.startsWith(term)) return 1;
-
-            // 3. Le nom de la ville commence par la recherche (ex: "Köln", "Kassel")
-            if (cityA.startsWith(term) && !cityB.startsWith(term)) return -1;
-            if (cityB.startsWith(term) && !cityA.startsWith(term)) return 1;
-
-            return 0;
-        });
-    }
 
     displayResults(filtered);
 }
 
 document.getElementById('searchInput').addEventListener('input', filterData);
+document.getElementById('exactMatchCheckbox').addEventListener('change', filterData);
 
 loadData();
