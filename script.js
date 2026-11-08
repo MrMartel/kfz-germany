@@ -112,7 +112,6 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
-    // Récupération du landId canonique depuis data.json (ex: 'bw', 'bayern', 'nrw'...)
     const item = platesData.find(d => d.state === state);
     const landId = item ? (item.landId || '').toLowerCase().trim() : '';
     const stateClean = (state || '').toLowerCase().trim();
@@ -137,7 +136,10 @@ function highlightMapState(state) {
         const str = attrString.toLowerCase();
         let isMatch = false;
 
-        if (stateClean !== '') {
+        if (stateClean === '') {
+            // Quand "Tous les Länder" est sélectionné, toute la carte s'allume en bleu
+            isMatch = true;
+        } else {
             if (landId === 'bw' || stateClean.includes('bade') || stateClean.includes('baden')) {
                 isMatch = /\b(de[-_]?bw|bw|baden|w[uüe]+r[t]+emberg)\b/i.test(str) || str.includes('bw') || str.includes('baden');
             } else if (landId === 'bayern' || stateClean.includes('bav')) {
