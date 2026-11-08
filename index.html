@@ -6,17 +6,17 @@
     <title>Kfz-Kennzeichen Finder</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
-    <!-- Script Tailwind CSS pour alimenter toutes les classes de script.js -->
+    <!-- Framework Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center">
 
-    <!-- En-tête avec plaque dynamique -->
+    <!-- En-tête avec image d'accueil fixe -->
     <header class="text-center mb-8 max-w-xl w-full">
-    <img src="image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="max-w-[400px] w-90% h-auto block mx-auto mb-4 rounded-lg shadow-2xl">
-    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
-    <p class="text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
-</header>
+        <img src="image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="max-w-[400px] w-[90%] h-auto block mx-auto mb-4 rounded-lg shadow-2xl">
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
+        <p class="text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+    </header>
 
     <main class="w-full max-w-5xl flex flex-col gap-6">
         
@@ -32,24 +32,20 @@
             </label>
         </section>
 
-        <!-- Tableau de bord : Carte & Filtres dynamiques -->
+        <!-- Tableau de bord : Carte & Filtres -->
         <section class="bg-slate-800/50 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row gap-6 items-stretch shadow-xl">
             
-            <!-- Conteneur Carte SVG -->
+            <!-- Conteneur Carte SVG (injecté directement par JS) -->
             <div class="flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
-                <div id="svgContainer" class="w-full flex justify-center items-center">
-                    <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg" class="w-full max-w-[240px] h-auto"></object>
-                </div>
+                <div id="svgContainer" class="w-full flex justify-center items-center"></div>
                 <span id="mapHoverLabel" class="text-xs font-medium text-slate-400 mt-3">Toutes les régions</span>
             </div>
 
             <!-- Conteneur Filtres générés par script.js -->
-            <div class="flex-1 flex flex-wrap content-start gap-2" id="statesFilterContainer">
-                <!-- Les boutons sont générés automatiquement par initStatesFilter() -->
-            </div>
+            <div class="flex-1 flex flex-wrap content-start gap-2" id="statesFilterContainer"></div>
         </section>
 
-        <!-- Grille de résultats générée par script.js -->
+        <!-- Grille des résultats -->
         <section>
             <div id="resultCount" class="text-xs font-semibold text-slate-400 mb-3 px-1"></div>
             <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
