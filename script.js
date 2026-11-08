@@ -71,7 +71,6 @@ function selectState(state) {
     const label = document.getElementById('mapHoverLabel');
     if (label) label.textContent = state || 'Toutes les régions';
 
-    // Mise à jour de l'état actif des boutons
     buttons.forEach(btn => {
         if (btn.dataset.state === state) {
             btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
@@ -86,9 +85,7 @@ function selectState(state) {
             : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     }
 
-    // Mise en surbrillance automatique du Land sur la carte SVG
     highlightMapState(state);
-
     filterData();
 }
 
@@ -96,25 +93,23 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
-    // Dictionnaire étendu incluant toutes les formes d'orthographe (FR/DE/ISO/NUTS)
     const mapAliases = {
-        'bade-wurtemberg': ['bw', 'de-bw', 'de.bw', 'de_bw', 'de1', 'baden-württemberg', 'baden-wuerttemberg', 'baden-wurtemberg', 'bade-wurtemberg', 'bade-würtemberg'],
+        'bade-wurtemberg': ['bw', 'de-bw', 'de.bw', 'de_bw', 'de1', 'baden-württemberg', 'baden-wuerttemberg', 'baden-wurtemberg', 'bade-wurtemberg', 'bade-würtemberg', 'baden_wuerttemberg'],
         'bavière': ['bayern', 'de-by', 'de.by', 'de_by', 'de2', 'bavaria', 'bavière', 'baviere', 'by'],
         'berlin': ['berlin', 'de-be', 'de.be', 'de_be', 'de3', 'be'],
         'brandebourg': ['brandenburg', 'de-bb', 'de.bb', 'de_bb', 'de4', 'brandebourg', 'bb'],
         'brême': ['bremen', 'de-hb', 'de.hb', 'de_hb', 'de5', 'brême', 'breme', 'hb'],
         'hambourg': ['hamburg', 'de-hh', 'de.hh', 'de_hh', 'de6', 'hambourg', 'hh'],
         'hesse': ['hessen', 'hesse', 'de-he', 'de.he', 'de_he', 'de7', 'he'],
-        'mecklemburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
-        'mecklembourg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
-        'mecklenburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
-        'basse-saxe': ['niedersachsen', 'de-ni', 'de.ni', 'de_ni', 'de9', 'basse-saxe', 'lower saxony', 'ni'],
+        'mecklemburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'pomeranie'],
+        'mecklembourg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'pomeranie'],
+        'basse-saxe': ['niedersachsen', 'de-ni', 'de.ni', 'de_ni', 'de9', 'basse-saxe', 'lower-saxony', 'ni'],
         'rhénanie-du-nord-westphalie': ['nrw', 'de-nw', 'de.nw', 'de_nw', 'dea', 'nordrhein-westfalen', 'nordrhein_westfalen', 'rhénanie-du-nord-westphalie', 'rhenanie-du-nord-westphalie', 'nw'],
         'rhénanie-palatinat': ['rlp', 'de-rp', 'de.rp', 'de_rp', 'deb', 'rheinland-pfalz', 'rheinland_pfalz', 'rhénanie-palatinat', 'rhenanie-palatinat', 'rp'],
         'sarre': ['saarland', 'de-sl', 'de.sl', 'de_sl', 'dec', 'sarre', 'sl'],
         'saxe': ['sachsen', 'de-sn', 'de.sn', 'de_sn', 'ded', 'saxe', 'saxony', 'sn'],
         'saxe-anhalt': ['st', 'de-st', 'de.st', 'de_st', 'dee', 'sachsen-anhalt', 'sachsen_anhalt', 'saxe-anhalt'],
-        'schleswig-holstein': ['sh', 'de-sh', 'de.sh', 'de_sh', 'def', 'schleswig-holstein', 'schleswig_holstein'],
+        'schleswig-holstein': ['sh', 'de-sh', 'de.sh', 'de_sh', 'def', 'schleswig-holstein', 'schleswig_holstein', 'schleswig'],
         'thuringe': ['thueringen', 'de-th', 'de.th', 'de_th', 'deg', 'thüringen', 'thuringen', 'thuringe', 'th'],
         'fédéral': ['bund', 'de-bund', 'de_bund', 'fédéral', 'federal']
     };
@@ -122,37 +117,46 @@ function highlightMapState(state) {
     const stateKey = (state || '').toLowerCase().trim();
     const targetAliases = stateKey ? (mapAliases[stateKey] || [stateKey]) : [];
 
-    const elements = svg.querySelectorAll('path, polygon, g');
-    elements.forEach(el => {
-        const id = (el.getAttribute('id') || '').toLowerCase().trim();
-        const dataState = (el.dataset.state || '').toLowerCase().trim();
-        const dataLand = (el.dataset.land || '').toLowerCase().trim();
-        const landId = (el.dataset.landId || '').toLowerCase().trim();
-        const name = (el.getAttribute('name') || '').toLowerCase().trim();
-        const className = (el.getAttribute('class') || '').toLowerCase().trim();
+    // Sélection de toutes les formes géométriques du SVG
+    const shapes = svg.querySelectorAll('path, polygon, rect, circle');
 
-        const isMatch = targetAliases.some(alias => 
-            id === alias || 
-            dataState === alias || 
-            dataLand === alias || 
-            landId === alias || 
-            name === alias || 
-            className.includes(alias) ||
-            (alias.length > 2 && (id.includes(alias) || name.includes(alias)))
-        );
+    shapes.forEach(el => {
+        // Remonter jusqu'à la racine <svg> pour récupérer les IDs/Classes parents (<g id="DE-SH">)
+        let identifiers = [];
+        let current = el;
+        while (current && current !== svg && current.tagName !== 'svg') {
+            if (current.id) identifiers.push(current.id);
+            if (current.getAttribute('name')) identifiers.push(current.getAttribute('name'));
+            if (current.getAttribute('class')) identifiers.push(current.getAttribute('class'));
+            if (current.dataset) {
+                if (current.dataset.state) identifiers.push(current.dataset.state);
+                if (current.dataset.land) identifiers.push(current.dataset.land);
+                if (current.dataset.landId) identifiers.push(current.dataset.landId);
+            }
+            current = current.parentElement;
+        }
 
-        if (state !== '' && isMatch) {
-            el.style.fill = '#2563eb';
-            el.style.stroke = '#ffffff';
-            el.style.strokeWidth = '1.5px';
-            el.style.opacity = '1';
-            el.style.transition = 'all 0.3s ease';
+        const infoText = identifiers.join(' ').toLowerCase();
+
+        // Analyse par expression régulière exacte
+        const isMatch = stateKey !== '' && targetAliases.some(alias => {
+            const cleanAlias = alias.toLowerCase().trim();
+            const regex = new RegExp(`(?:^|[^a-z0-9])${cleanAlias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i');
+            return regex.test(infoText) || (cleanAlias.length > 3 && infoText.includes(cleanAlias));
+        });
+
+        if (isMatch) {
+            el.style.setProperty('fill', '#2563eb', 'important');
+            el.style.setProperty('stroke', '#ffffff', 'important');
+            el.style.setProperty('stroke-width', '1.5px', 'important');
+            el.style.setProperty('opacity', '1', 'important');
+            el.style.setProperty('transition', 'all 0.3s ease', 'important');
         } else {
-            el.style.fill = '';
-            el.style.stroke = '';
-            el.style.strokeWidth = '';
-            el.style.opacity = '';
-            el.style.transition = 'all 0.3s ease';
+            el.style.removeProperty('fill');
+            el.style.removeProperty('stroke');
+            el.style.removeProperty('stroke-width');
+            el.style.removeProperty('opacity');
+            el.style.removeProperty('transition');
         }
     });
 }
