@@ -13,9 +13,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0d131f;
+            color: #ffffff;
             min-height: 100vh;
             padding: 2rem 1rem;
             display: flex;
@@ -25,153 +25,135 @@
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            width: 100%;
+            margin-bottom: 1.5rem;
         }
 
         .hero-plate {
-            max-width: 420px;
-            width: 100%;
+            max-width: 380px;
+            width: 90%;
             height: auto;
             display: block;
-            margin: 0 auto 1.5rem auto;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            margin: 0 auto 1.25rem auto;
+            border-radius: 6px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
         }
 
         h1 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.025em;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
         }
 
         header p {
-            color: #94a3b8;
-            font-size: 1rem;
+            color: #8b9bb4;
+            font-size: 0.95rem;
         }
 
-        main {
+        .main-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 960px;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
 
-        .search-container {
+        /* Zone de recherche */
+        .search-section {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
+            gap: 0.6rem;
         }
 
         #searchInput {
             width: 100%;
-            padding: 0.85rem 1.25rem;
-            background-color: #1e293b;
-            border: 1px solid #334155;
+            max-width: 480px;
+            padding: 0.75rem 1.25rem;
+            background-color: #172033;
+            border: 1px solid #283654;
             border-radius: 9999px;
             color: #ffffff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
-            transition: all 0.2s ease;
         }
 
-        #searchInput:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        #searchInput::placeholder {
+            color: #64748b;
         }
 
-        .checkbox-container {
+        .checkbox-label {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #94a3b8;
-            font-size: 0.875rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .checkbox-container input {
-            accent-color: #3b82f6;
-            width: 16px;
-            height: 16px;
+            color: #8b9bb4;
+            font-size: 0.85rem;
             cursor: pointer;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 1.5rem;
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 1rem;
-            padding: 1.5rem;
+        .checkbox-label input[type="checkbox"] {
+            accent-color: #2563eb;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
         }
 
-        @media (max-width: 900px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+        /* Panneau central (Carte + Filtres) */
+        .dashboard-card {
+            background-color: #151c2c;
+            border: 1px solid #202b42;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-card {
+                flex-direction: column;
             }
         }
 
-        .map-wrapper {
+        .map-box {
+            flex: 0 0 260px;
+            background-color: #0d131f;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            position: relative;
+            justify-content: space-between;
         }
 
-        .map-wrapper object {
+        .map-box object {
             width: 100%;
-            max-height: 380px;
-            pointer-events: auto;
+            max-height: 280px;
         }
 
-        .map-legend {
-            position: absolute;
-            bottom: 0.75rem;
-            left: 0.75rem;
-            color: #64748b;
+        .map-box .caption {
             font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.5rem;
         }
 
-        .filters-wrapper {
+        .filters-grid {
+            flex: 1;
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .filter-btn {
-            background-color: #334155;
-            color: #cbd5e1;
+            background-color: #1e293b;
+            color: #94a3b8;
             border: none;
-            padding: 0.5rem 0.85rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .filter-btn:hover {
-            background-color: #475569;
-            color: #ffffff;
+            transition: background-color 0.15s, color 0.15s;
         }
 
         .filter-btn.active {
@@ -179,54 +161,20 @@
             color: #ffffff;
         }
 
+        /* Grille des plaques de résultats */
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1rem;
         }
 
-        /* Cartes de résultats injectées par script.js */
-        .card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .card-plate {
-            background-color: #ffffff;
-            color: #000000;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            padding: 0.25rem 0.5rem;
-            font-weight: 900;
-            font-size: 1.5rem;
-            min-width: 70px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .card-info h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .card-info .land {
-            font-size: 0.8rem;
-            color: #3b82f6;
-            font-weight: 600;
-        }
-
-        .card-info .details {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 0.25rem;
+        /* Correction de la taille des SVG/Etoiles injectés dans les cartes de plaques */
+        .results-grid svg, 
+        .results-grid img {
+            max-width: 24px;
+            max-height: 24px;
+            height: auto;
+            width: auto;
         }
     </style>
 </head>
@@ -238,24 +186,22 @@
         <p>Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
     </header>
 
-    <main>
-        <div class="search-container">
-            <div class="search-input-wrapper">
-                <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville...">
-            </div>
-            <label class="checkbox-container" for="exactPrefix">
-                <input type="checkbox" id="exactPrefix">
+    <div class="main-container">
+        <section class="search-section">
+            <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville...">
+            <label class="checkbox-label" for="exactPrefix">
+                <input type="checkbox" id="exactPrefix" checked>
                 Préfixe exact uniquement
             </label>
-        </div>
+        </section>
 
-        <div class="dashboard-grid">
-            <div class="map-wrapper">
+        <section class="dashboard-card">
+            <div class="map-box">
                 <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg"></object>
-                <span class="map-legend">Toutes les régions</span>
+                <span class="caption">Toutes les régions</span>
             </div>
 
-            <div class="filters-wrapper" id="laenderFilters">
+            <div class="filters-grid" id="laenderFilters">
                 <button class="filter-btn active" data-land="all">🇩🇪 Tous les Länder</button>
                 <button class="filter-btn" data-land="Bade-Wurtemberg">Bade-Wurtemberg</button>
                 <button class="filter-btn" data-land="Basse-Saxe">Basse-Saxe</button>
@@ -275,10 +221,10 @@
                 <button class="filter-btn" data-land="Schleswig-Holstein">Schleswig-Holstein</button>
                 <button class="filter-btn" data-land="Thuringe">Thuringe</button>
             </div>
-        </div>
+        </section>
 
-        <div class="results-grid" id="resultsGrid"></div>
-    </main>
+        <section class="results-grid" id="resultsGrid"></section>
+    </div>
 
     <script src="script.js"></script>
 </body>
