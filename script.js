@@ -112,30 +112,10 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
-    // Définition de motifs d'expressions régulières stricts (\b = mot entier) pour chaque Land
-    const statePatterns = {
-        'bade-wurtemberg': [/\bde[-_]?bw\b/i, /\bbw\b/i, /\bbaden\b/i, /\bw[uüa]rt[t]?emberg\b/i],
-        'bavière': [/\bde[-_]?by\b/i, /\bby\b/i, /\bbayern\b/i, /\bbavaria\b/i, /\bbavi[eè]re\b/i],
-        'berlin': [/\bde[-_]?be\b/i, /\bbe\b/i, /\bberlin\b/i],
-        'brandebourg': [/\bde[-_]?bb\b/i, /\bbb\b/i, /\bbrandenburg\b/i, /\bbrandebourg\b/i],
-        'brême': [/\bde[-_]?hb\b/i, /\bhb\b/i, /\bbremen\b/i, /\bbr[eê]me\b/i],
-        'hambourg': [/\bde[-_]?hh\b/i, /\bhh\b/i, /\bhamburg\b/i, /\bhambourg\b/i],
-        'hesse': [/\bde[-_]?he\b/i, /\bhe\b/i, /\bhessen\b/i, /\bhesse\b/i],
-        'mecklemburg-poméranie-occidentale': [/\bde[-_]?mv\b/i, /\bmv\b/i, /\bmecklenburg\b/i, /\bvorpommern\b/i, /\bpomeranie\b/i],
-        'mecklembourg-poméranie-occidentale': [/\bde[-_]?mv\b/i, /\bmv\b/i, /\bmecklenburg\b/i, /\bvorpommern\b/i, /\bpomeranie\b/i],
-        'basse-saxe': [/\bde[-_]?ni\b/i, /\bni\b/i, /\bniedersachsen\b/i, /\bbasse[-_]?saxe\b/i],
-        'rhénanie-du-nord-westphalie': [/\bde[-_]?nw\b/i, /\bnw\b/i, /\bnrw\b/i, /\bnordrhein\b/i, /\bwestfalen\b/i],
-        'rhénanie-palatinat': [/\bde[-_]?rp\b/i, /\brp\b/i, /\brlp\b/i, /\brheinland\b/i, /\bpfalz\b/i, /\bpalatinat\b/i],
-        'sarre': [/\bde[-_]?sl\b/i, /\bsl\b/i, /\bsaarland\b/i, /\bsarre\b/i],
-        'saxe': [/\bde[-_]?sn\b/i, /\bsn\b/i, /\bsachsen\b/i, /\bsaxe\b/i],
-        'saxe-anhalt': [/\bde[-_]?st\b/i, /\bst\b/i, /\banhalt\b/i],
-        'schleswig-holstein': [/\bde[-_]?sh\b/i, /\bsh\b/i, /\bschleswig\b/i, /\bholstein\b/i],
-        'thuringe': [/\bde[-_]?th\b/i, /\bth\b/i, /\bth[uü]ringen\b/i, /\bthuringe\b/i],
-        'fédéral': [/\bbund\b/i]
-    };
-
-    const key = (state || '').toLowerCase().trim();
-    const patterns = statePatterns[key] || [];
+    // Récupération du landId canonique depuis data.json (ex: 'bw', 'bayern', 'nrw'...)
+    const item = platesData.find(d => d.state === state);
+    const landId = item ? (item.landId || '').toLowerCase().trim() : '';
+    const stateClean = (state || '').toLowerCase().trim();
 
     const shapes = svg.querySelectorAll('path, polygon, rect, circle, use');
 
@@ -154,17 +134,44 @@ function highlightMapState(state) {
             current = current.parentElement;
         }
 
+        const str = attrString.toLowerCase();
         let isMatch = false;
 
-        if (key !== '' && patterns.length > 0) {
-            const hasExclusion = (
-                (key === 'saxe' && (/\banhalt\b/i.test(attrString) || /\bnieder\b/i.test(attrString) || /\bbasse\b/i.test(attrString))) ||
-                (key === 'hesse' && /\brhein\b/i.test(attrString)) ||
-                (key === 'rhénanie-palatinat' && /\bvorpommern\b/i.test(attrString))
-            );
-
-            if (!hasExclusion) {
-                isMatch = patterns.some(pattern => pattern.test(attrString));
+        if (stateClean !== '') {
+            if (landId === 'bw' || stateClean.includes('bade') || stateClean.includes('baden')) {
+                isMatch = /\b(de[-_]?bw|bw|baden|w[uüe]+r[t]+emberg)\b/i.test(str) || str.includes('bw') || str.includes('baden');
+            } else if (landId === 'bayern' || stateClean.includes('bav')) {
+                isMatch = /\b(de[-_]?by|by|bayern|bavaria|baviere|bavière)\b/i.test(str);
+            } else if (landId === 'berlin' || stateClean === 'berlin') {
+                isMatch = /\b(de[-_]?be|be|berlin)\b/i.test(str) && !str.includes('berg');
+            } else if (landId === 'brandenburg' || stateClean.includes('brand')) {
+                isMatch = /\b(de[-_]?bb|bb|brandenburg|brandebourg)\b/i.test(str);
+            } else if (landId === 'bremen' || stateClean.includes('brê') || stateClean.includes('brem')) {
+                isMatch = /\b(de[-_]?hb|hb|bremen|breme|brême)\b/i.test(str);
+            } else if (landId === 'hamburg' || stateClean.includes('hamb')) {
+                isMatch = /\b(de[-_]?hh|hh|hamburg|hambourg)\b/i.test(str);
+            } else if (landId === 'hessen' || stateClean.includes('hess')) {
+                isMatch = /\b(de[-_]?he|he|hessen|hesse)\b/i.test(str) && !/\brhein\b/i.test(str);
+            } else if (landId === 'mv' || stateClean.includes('meckl')) {
+                isMatch = /\b(de[-_]?mv|mv|mecklenburg|mecklemburg|vorpommern|pomeranie)\b/i.test(str);
+            } else if (landId === 'niedersachsen' || stateClean.includes('basse')) {
+                isMatch = /\b(de[-_]?ni|ni|niedersachsen|basse[-_]?saxe|lower[-_]?saxony)\b/i.test(str);
+            } else if (landId === 'nrw' || stateClean.includes('nord')) {
+                isMatch = /\b(de[-_]?nw|de[-_]?nrw|nw|nrw|nordrhein|westfalen)\b/i.test(str);
+            } else if (landId === 'rlp' || stateClean.includes('palat')) {
+                isMatch = (/\b(de[-_]?rp|rp|rlp|rheinland|pfalz|palatinat)\b/i.test(str)) && !/\bvorpommern\b/i.test(str);
+            } else if (landId === 'saarland' || stateClean.includes('sarr')) {
+                isMatch = /\b(de[-_]?sl|sl|saarland|sarre)\b/i.test(str);
+            } else if (landId === 'sachsen' || stateClean === 'saxe') {
+                isMatch = /\b(de[-_]?sn|sn|sachsen|saxe)\b/i.test(str) && !/\b(anhalt|nieder|basse)\b/i.test(str);
+            } else if (landId === 'st' || stateClean.includes('anhalt')) {
+                isMatch = /\b(de[-_]?st|st|anhalt)\b/i.test(str) && !/\bholstein\b/i.test(str);
+            } else if (landId === 'sh' || stateClean.includes('schles')) {
+                isMatch = /\b(de[-_]?sh|sh|schleswig|holstein)\b/i.test(str);
+            } else if (landId === 'thueringen' || stateClean.includes('thur')) {
+                isMatch = /\b(de[-_]?th|th|thüringen|thueringen|thuringe)\b/i.test(str);
+            } else if (landId === 'bund' || stateClean.includes('fédér')) {
+                isMatch = /\b(bund)\b/i.test(str);
             }
         }
 
