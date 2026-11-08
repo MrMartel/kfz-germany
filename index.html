@@ -5,226 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kfz-Kennzeichen Finder</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d131f;
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-plate {
-            max-width: 380px;
-            width: 90%;
-            height: auto;
-            display: block;
-            margin: 0 auto 1.25rem auto;
-            border-radius: 6px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        header p {
-            color: #8b9bb4;
-            font-size: 0.95rem;
-        }
-
-        .main-container {
-            width: 100%;
-            max-width: 960px;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        /* Zone de recherche */
-        .search-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        #searchInput {
-            width: 100%;
-            max-width: 480px;
-            padding: 0.75rem 1.25rem;
-            background-color: #172033;
-            border: 1px solid #283654;
-            border-radius: 9999px;
-            color: #ffffff;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        #searchInput::placeholder {
-            color: #64748b;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #8b9bb4;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            accent-color: #2563eb;
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
-        }
-
-        /* Panneau central (Carte + Filtres) */
-        .dashboard-card {
-            background-color: #151c2c;
-            border: 1px solid #202b42;
-            border-radius: 12px;
-            padding: 1.25rem;
-            display: flex;
-            gap: 1.25rem;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-card {
-                flex-direction: column;
-            }
-        }
-
-        .map-box {
-            flex: 0 0 260px;
-            background-color: #0d131f;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .map-box object {
-            width: 100%;
-            max-height: 280px;
-        }
-
-        .map-box .caption {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 0.5rem;
-        }
-
-        .filters-grid {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            gap: 0.4rem;
-        }
-
-        .filter-btn {
-            background-color: #1e293b;
-            color: #94a3b8;
-            border: none;
-            padding: 0.45rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.15s, color 0.15s;
-        }
-
-        .filter-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
-        }
-
-        /* Grille des plaques de résultats */
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-
-        /* Correction de la taille des SVG/Etoiles injectés dans les cartes de plaques */
-        .results-grid svg, 
-        .results-grid img {
-            max-width: 24px;
-            max-height: 24px;
-            height: auto;
-            width: auto;
-        }
-    </style>
+    
+    <!-- Script Tailwind CSS pour alimenter toutes les classes de script.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center">
 
-    <header>
-        <img src="image_accueil.png" alt="Plaque d'immatriculation allemande" class="hero-plate">
-        <h1>Kfz-Kennzeichen Finder</h1>
-        <p>Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+    <!-- En-tête avec plaque dynamique -->
+    <header class="text-center mb-8 max-w-xl w-full">
+        <!-- Plaque d'accueil dynamique ou image fallback -->
+        <div class="mb-4 inline-flex border-4 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-2xl shadow-blue-500/10 h-24 items-center">
+            <div class="bg-blue-700 text-white w-12 h-full flex flex-col items-center justify-between py-2.5 shadow-inner">
+                <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
+                </svg>
+                <span class="text-xs font-black tracking-widest">D</span>
+            </div>
+            <div class="px-6 flex items-center justify-center font-black tracking-widest text-4xl text-slate-900 gap-3">
+                <span id="heroPlatePrefix">RA</span>
+                <span id="heroPlateCity" class="text-2xl font-bold text-slate-600 border-l-2 border-slate-300 pl-3">Rastatt</span>
+            </div>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
+        <p class="text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
     </header>
 
-    <div class="main-container">
-        <section class="search-section">
-            <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville...">
-            <label class="checkbox-label" for="exactPrefix">
-                <input type="checkbox" id="exactPrefix" checked>
+    <main class="w-full max-w-5xl flex flex-col gap-6">
+        
+        <!-- Zone de recherche -->
+        <section class="flex flex-col items-center gap-3">
+            <div class="w-full max-w-md">
+                <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." 
+                       class="w-full px-5 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
+            </div>
+            <label class="flex items-center gap-2 text-slate-400 text-xs md:text-sm cursor-pointer hover:text-slate-200 transition-colors" for="exactMatchCheckbox">
+                <input type="checkbox" id="exactMatchCheckbox" checked class="accent-blue-600 w-4 h-4 rounded cursor-pointer">
                 Préfixe exact uniquement
             </label>
         </section>
 
-        <section class="dashboard-card">
-            <div class="map-box">
-                <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg"></object>
-                <span class="caption">Toutes les régions</span>
+        <!-- Tableau de bord : Carte & Filtres dynamiques -->
+        <section class="bg-slate-800/50 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row gap-6 items-stretch shadow-xl">
+            
+            <!-- Conteneur Carte SVG -->
+            <div class="flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
+                <div id="svgContainer" class="w-full flex justify-center items-center">
+                    <object id="germanyMap" type="image/svg+xml" data="germany-map.svg.svg" class="w-full max-w-[240px] h-auto"></object>
+                </div>
+                <span id="mapHoverLabel" class="text-xs font-medium text-slate-400 mt-3">Toutes les régions</span>
             </div>
 
-            <div class="filters-grid" id="laenderFilters">
-                <button class="filter-btn active" data-land="all">🇩🇪 Tous les Länder</button>
-                <button class="filter-btn" data-land="Bade-Wurtemberg">Bade-Wurtemberg</button>
-                <button class="filter-btn" data-land="Basse-Saxe">Basse-Saxe</button>
-                <button class="filter-btn" data-land="Bavière">Bavière</button>
-                <button class="filter-btn" data-land="Berlin">Berlin</button>
-                <button class="filter-btn" data-land="Brandebourg">Brandebourg</button>
-                <button class="filter-btn" data-land="Brême">Brême</button>
-                <button class="filter-btn" data-land="Fédéral">Fédéral</button>
-                <button class="filter-btn" data-land="Hambourg">Hambourg</button>
-                <button class="filter-btn" data-land="Hesse">Hesse</button>
-                <button class="filter-btn" data-land="Mecklembourg-Poméranie-Occidentale">Mecklembourg-Poméranie-Occidentale</button>
-                <button class="filter-btn" data-land="Rhénanie-Palatinat">Rhénanie-Palatinat</button>
-                <button class="filter-btn" data-land="Rhénanie-du-Nord-Westphalie">Rhénanie-du-Nord-Westphalie</button>
-                <button class="filter-btn" data-land="Sarre">Sarre</button>
-                <button class="filter-btn" data-land="Saxe">Saxe</button>
-                <button class="filter-btn" data-land="Saxe-Anhalt">Saxe-Anhalt</button>
-                <button class="filter-btn" data-land="Schleswig-Holstein">Schleswig-Holstein</button>
-                <button class="filter-btn" data-land="Thuringe">Thuringe</button>
+            <!-- Conteneur Filtres générés par script.js -->
+            <div class="flex-1 flex flex-wrap content-start gap-2" id="statesFilterContainer">
+                <!-- Les boutons sont générés automatiquement par initStatesFilter() -->
             </div>
         </section>
 
-        <section class="results-grid" id="resultsGrid"></section>
-    </div>
+        <!-- Grille de résultats générée par script.js -->
+        <section>
+            <div id="resultCount" class="text-xs font-semibold text-slate-400 mb-3 px-1"></div>
+            <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
