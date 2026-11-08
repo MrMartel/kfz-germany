@@ -2,14 +2,12 @@ let platesData = [];
 let selectedState = '';
 
 async function loadData() {
-    // 1. Chargement indépendant de la carte SVG
     loadSVGMap();
 
-    // 2. Chargement sécurisé de la base de données JSON
     try {
         const response = await fetch('data.json');
         if (!response.ok) {
-            throw new Error(`Fichier data.json introuvable (Code HTTP ${response.status})`);
+            throw new Error(`Fichier data.json introuvable (HTTP ${response.status})`);
         }
         
         platesData = await response.json();
@@ -22,7 +20,7 @@ async function loadData() {
             grid.innerHTML = `
                 <div class="col-span-full text-center py-8 bg-red-900/20 border border-red-500/30 rounded-2xl text-red-300">
                     <p class="font-bold text-sm">Erreur de chargement des données</p>
-                    <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez le nom exact du fichier dans votre dépôt Git.</p>
+                    <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez la casse du fichier sur GitHub Pages.</p>
                 </div>`;
         }
     }
@@ -32,7 +30,6 @@ async function loadSVGMap() {
     const container = document.getElementById('svgContainer');
     if (!container) return;
 
-    // Test successif des deux noms de fichiers possibles
     const mapFiles = ['germany-map.svg.svg', 'germany-map.svg'];
     let svgText = null;
 
@@ -44,7 +41,7 @@ async function loadSVGMap() {
                 break;
             }
         } catch (e) {
-            // Continuation vers le nom suivant
+            // Continuation
         }
     }
 
@@ -57,7 +54,7 @@ async function loadSVGMap() {
         }
         highlightMapState(selectedState);
     } else {
-        container.innerHTML = `<span class="text-xs text-amber-400 text-center">Carte SVG introuvable sur le serveur</span>`;
+        container.innerHTML = `<span class="text-xs text-amber-400 text-center">Carte SVG introuvable</span>`;
     }
 }
 
@@ -115,50 +112,86 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
-    const mapAliases = {
-        'bade-wurtemberg': ['bw', 'de-bw', 'de.bw', 'de_bw', 'de1', 'baden-württemberg', 'baden-wuerttemberg', 'baden-wurtemberg', 'bade-wurtemberg', 'bade-würtemberg', 'baden_wuerttemberg', 'baden-wurttemberg', 'path_de-bw', 'land_bw'],
-        'bavière': ['bayern', 'by', 'de-by', 'de.by', 'de_by', 'de2', 'bavaria', 'bavière', 'baviere', 'path_de-by', 'land_by'],
-        'berlin': ['berlin', 'be', 'de-be', 'de.be', 'de_be', 'de3', 'path_de-be', 'land_be'],
-        'brandebourg': ['brandenburg', 'bb', 'de-bb', 'de.bb', 'de_bb', 'de4', 'brandebourg', 'path_de-bb', 'land_bb'],
-        'brême': ['bremen', 'hb', 'de-hb', 'de.hb', 'de_hb', 'de5', 'brême', 'breme', 'path_de-hb', 'land_hb'],
-        'hambourg': ['hamburg', 'hh', 'de-hh', 'de.hh', 'de_hh', 'de6', 'hambourg', 'path_de-hh', 'land_hh'],
-        'hesse': ['hessen', 'he', 'de-he', 'de.he', 'de_he', 'de7', 'hesse', 'path_de-he', 'land_he'],
-        'mecklemburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg-pomeranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklembourg-poméranie-occidentale', 'pomeranie'],
-        'mecklembourg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg-pomeranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklembourg-poméranie-occidentale', 'pomeranie'],
-        'basse-saxe': ['niedersachsen', 'ni', 'de-ni', 'de.ni', 'de_ni', 'de9', 'basse-saxe', 'lower-saxony', 'path_de-ni', 'land_ni'],
-        'rhénanie-du-nord-westphalie': ['nrw', 'nw', 'de-nw', 'de.nw', 'de_nw', 'dea', 'nordrhein-westfalen', 'nordrhein_westfalen', 'rhénanie-du-nord-westphalie', 'rhenanie-du-nord-westphalie', 'path_de-nw', 'land_nw'],
-        'rhénanie-palatinat': ['rlp', 'rp', 'de-rp', 'de.rp', 'de_rp', 'deb', 'rheinland-pfalz', 'rheinland_pfalz', 'rhénanie-palatinat', 'rhenanie-palatinat', 'path_de-rp', 'land_rp'],
-        'sarre': ['saarland', 'sl', 'de-sl', 'de.sl', 'de_sl', 'dec', 'sarre', 'path_de-sl', 'land_sl'],
-        'saxe': ['sachsen', 'sn', 'de-sn', 'de.sn', 'de_sn', 'ded', 'saxe', 'saxony', 'path_de-sn', 'land_sn'],
-        'saxe-anhalt': ['sachsen-anhalt', 'st', 'de-st', 'de.st', 'de_st', 'dee', 'saxe-anhalt', 'sachsen_anhalt', 'path_de-st', 'land_st'],
-        'schleswig-holstein': ['schleswig-holstein', 'sh', 'de-sh', 'de.sh', 'de_sh', 'def', 'schleswig_holstein', 'path_de-sh', 'land_sh'],
-        'thuringe': ['thüringen', 'thueringen', 'th', 'de-th', 'de.th', 'de_th', 'deg', 'thuringe', 'thuringen', 'path_de-th', 'land_th'],
-        'fédéral': ['bund', 'de-bund', 'de_bund', 'fédéral', 'federal']
-    };
-
     const stateKey = (state || '').toLowerCase().trim();
-    const targetAliases = stateKey ? (mapAliases[stateKey] || [stateKey]) : [];
-
     const shapes = svg.querySelectorAll('path, polygon, rect, circle, use');
 
     shapes.forEach(el => {
-        let tokens = new Set();
+        // Concaténation des identifiants et attributs de l'élément jusqu'à la racine SVG
+        let attrString = '';
         let current = el;
         while (current && current !== svg && current.tagName !== 'svg') {
-            if (current.id) tokens.add(current.id.toLowerCase().trim());
-            if (current.getAttribute('name')) tokens.add(current.getAttribute('name').toLowerCase().trim());
-            if (current.getAttribute('class')) {
-                current.getAttribute('class').toLowerCase().trim().split(/\s+/).forEach(c => tokens.add(c));
-            }
+            if (current.id) attrString += ' ' + current.id;
+            if (current.getAttribute('name')) attrString += ' ' + current.getAttribute('name');
+            if (current.getAttribute('class')) attrString += ' ' + current.getAttribute('class');
             if (current.dataset) {
-                if (current.dataset.state) tokens.add(current.dataset.state.toLowerCase().trim());
-                if (current.dataset.land) tokens.add(current.dataset.land.toLowerCase().trim());
-                if (current.dataset.landId) tokens.add(current.dataset.landId.toLowerCase().trim());
+                if (current.dataset.state) attrString += ' ' + current.dataset.state;
+                if (current.dataset.land) attrString += ' ' + current.dataset.land;
+                if (current.dataset.landId) attrString += ' ' + current.dataset.landId;
             }
             current = current.parentElement;
         }
 
-        const isMatch = stateKey !== '' && targetAliases.some(alias => tokens.has(alias));
+        const str = attrString.toLowerCase();
+        let isMatch = false;
+
+        if (stateKey !== '') {
+            switch (stateKey) {
+                case 'bade-wurtemberg':
+                case 'bade-würtemberg':
+                    isMatch = str.includes('bw') || str.includes('baden') || str.includes('wurt') || str.includes('würt') || str.includes('wuert');
+                    break;
+                case 'saxe':
+                    isMatch = (str.includes('sn') || str.includes('sachsen') || str.includes('saxe')) &&
+                              !str.includes('nieder') && !str.includes('basse') && !str.includes('anhalt');
+                    break;
+                case 'basse-saxe':
+                    isMatch = str.includes('ni') || str.includes('niedersachsen') || str.includes('basse-saxe') || str.includes('lower-saxony');
+                    break;
+                case 'saxe-anhalt':
+                    isMatch = str.includes('st') || str.includes('anhalt');
+                    break;
+                case 'rhénanie-du-nord-westphalie':
+                    isMatch = str.includes('nrw') || str.includes('nw') || str.includes('nordrhein') || str.includes('westfalen');
+                    break;
+                case 'rhénanie-palatinat':
+                    isMatch = str.includes('rlp') || str.includes('rp') || str.includes('pfalz') || str.includes('palatinat');
+                    break;
+                case 'bavière':
+                    isMatch = str.includes('by') || str.includes('bayern') || str.includes('bavaria') || str.includes('bavière') || str.includes('baviere');
+                    break;
+                case 'berlin':
+                    isMatch = str.includes('be') || str.includes('berlin');
+                    break;
+                case 'brandebourg':
+                    isMatch = str.includes('bb') || str.includes('brandenburg') || str.includes('brandebourg');
+                    break;
+                case 'brême':
+                    isMatch = str.includes('hb') || str.includes('bremen') || str.includes('brême') || str.includes('breme');
+                    break;
+                case 'hambourg':
+                    isMatch = str.includes('hh') || str.includes('hamburg') || str.includes('hambourg');
+                    break;
+                case 'hesse':
+                    isMatch = str.includes('he') || str.includes('hessen') || str.includes('hesse');
+                    break;
+                case 'mecklemburg-poméranie-occidentale':
+                case 'mecklembourg-poméranie-occidentale':
+                    isMatch = str.includes('mv') || str.includes('mecklenburg') || str.includes('mecklemburg') || str.includes('vorpommern') || str.includes('pomeranie');
+                    break;
+                case 'sarre':
+                    isMatch = str.includes('sl') || str.includes('saarland') || str.includes('sarre');
+                    break;
+                case 'schleswig-holstein':
+                    isMatch = str.includes('sh') || str.includes('schleswig') || str.includes('holstein');
+                    break;
+                case 'thuringe':
+                    isMatch = str.includes('th') || str.includes('thüringen') || str.includes('thueringen') || str.includes('thuringe');
+                    break;
+                case 'fédéral':
+                    isMatch = str.includes('bund');
+                    break;
+            }
+        }
 
         if (isMatch) {
             el.style.setProperty('fill', '#2563eb', 'important');
