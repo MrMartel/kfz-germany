@@ -96,38 +96,49 @@ function highlightMapState(state) {
     const svg = document.getElementById('germanyMap');
     if (!svg) return;
 
+    // Dictionnaire étendu incluant toutes les formes d'orthographe (FR/DE/ISO/NUTS)
     const mapAliases = {
-        'Bade-Wurtemberg': ['bw', 'de-bw', 'baden-württemberg', 'bade-wurtemberg'],
-        'Bavière': ['bayern', 'de-by', 'bayern', 'bavière'],
-        'Berlin': ['berlin', 'de-be', 'berlin'],
-        'Brandebourg': ['brandenburg', 'de-bb', 'brandenburg', 'brandebourg'],
-        'Brême': ['bremen', 'de-hb', 'bremen', 'brême'],
-        'Hambourg': ['hamburg', 'de-hh', 'hamburg', 'hambourg'],
-        'Hesse': ['hessen', 'de-he', 'hessen', 'hesse'],
-        'Mecklembourg-Poméranie-Occidentale': ['mv', 'de-mv', 'mecklenburg-vorpommern', 'mecklemburg-poméranie-occidentale', 'mecklembourg-poméranie-occidentale'],
-        'Basse-Saxe': ['niedersachsen', 'de-ni', 'niedersachsen', 'basse-saxe'],
-        'Rhénanie-du-Nord-Westphalie': ['nrw', 'de-nw', 'nordrhein-westfalen', 'rhénanie-du-nord-westphalie'],
-        'Rhénanie-Palatinat': ['rlp', 'de-rp', 'rheinland-pfalz', 'rhénanie-palatinat'],
-        'Sarre': ['saarland', 'de-sl', 'saarland', 'sarre'],
-        'Saxe': ['sachsen', 'de-sn', 'sachsen', 'saxe'],
-        'Saxe-Anhalt': ['st', 'de-st', 'sachsen-anhalt', 'saxe-anhalt'],
-        'Schleswig-Holstein': ['sh', 'de-sh', 'schleswig-holstein'],
-        'Thuringe': ['thueringen', 'de-th', 'thüringen', 'thuringe'],
-        'Fédéral': ['bund', 'de-bund', 'fédéral']
+        'bade-wurtemberg': ['bw', 'de-bw', 'de.bw', 'de_bw', 'de1', 'baden-württemberg', 'baden-wuerttemberg', 'baden-wurtemberg', 'bade-wurtemberg', 'bade-würtemberg'],
+        'bavière': ['bayern', 'de-by', 'de.by', 'de_by', 'de2', 'bavaria', 'bavière', 'baviere', 'by'],
+        'berlin': ['berlin', 'de-be', 'de.be', 'de_be', 'de3', 'be'],
+        'brandebourg': ['brandenburg', 'de-bb', 'de.bb', 'de_bb', 'de4', 'brandebourg', 'bb'],
+        'brême': ['bremen', 'de-hb', 'de.hb', 'de_hb', 'de5', 'brême', 'breme', 'hb'],
+        'hambourg': ['hamburg', 'de-hh', 'de.hh', 'de_hh', 'de6', 'hambourg', 'hh'],
+        'hesse': ['hessen', 'hesse', 'de-he', 'de.he', 'de_he', 'de7', 'he'],
+        'mecklemburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
+        'mecklembourg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
+        'mecklenburg-poméranie-occidentale': ['mv', 'de-mv', 'de.mv', 'de_mv', 'de8', 'mecklenburg-vorpommern', 'mecklenburg_vorpommern', 'mecklenburg', 'mecklemburg', 'mecklembourg-poméranie-occidentale', 'mecklemburg-poméranie-occidentale', 'mecklenburg-poméranie-occidentale'],
+        'basse-saxe': ['niedersachsen', 'de-ni', 'de.ni', 'de_ni', 'de9', 'basse-saxe', 'lower saxony', 'ni'],
+        'rhénanie-du-nord-westphalie': ['nrw', 'de-nw', 'de.nw', 'de_nw', 'dea', 'nordrhein-westfalen', 'nordrhein_westfalen', 'rhénanie-du-nord-westphalie', 'rhenanie-du-nord-westphalie', 'nw'],
+        'rhénanie-palatinat': ['rlp', 'de-rp', 'de.rp', 'de_rp', 'deb', 'rheinland-pfalz', 'rheinland_pfalz', 'rhénanie-palatinat', 'rhenanie-palatinat', 'rp'],
+        'sarre': ['saarland', 'de-sl', 'de.sl', 'de_sl', 'dec', 'sarre', 'sl'],
+        'saxe': ['sachsen', 'de-sn', 'de.sn', 'de_sn', 'ded', 'saxe', 'saxony', 'sn'],
+        'saxe-anhalt': ['st', 'de-st', 'de.st', 'de_st', 'dee', 'sachsen-anhalt', 'sachsen_anhalt', 'saxe-anhalt'],
+        'schleswig-holstein': ['sh', 'de-sh', 'de.sh', 'de_sh', 'def', 'schleswig-holstein', 'schleswig_holstein'],
+        'thuringe': ['thueringen', 'de-th', 'de.th', 'de_th', 'deg', 'thüringen', 'thuringen', 'thuringe', 'th'],
+        'fédéral': ['bund', 'de-bund', 'de_bund', 'fédéral', 'federal']
     };
 
-    const targetAliases = state ? (mapAliases[state] || [state.toLowerCase()]) : [];
+    const stateKey = (state || '').toLowerCase().trim();
+    const targetAliases = stateKey ? (mapAliases[stateKey] || [stateKey]) : [];
 
     const elements = svg.querySelectorAll('path, polygon, g');
     elements.forEach(el => {
-        const id = (el.getAttribute('id') || '').toLowerCase();
-        const dataState = (el.dataset.state || '').toLowerCase();
-        const dataLand = (el.dataset.land || '').toLowerCase();
-        const name = (el.getAttribute('name') || '').toLowerCase();
-        const className = (el.getAttribute('class') || '').toLowerCase();
+        const id = (el.getAttribute('id') || '').toLowerCase().trim();
+        const dataState = (el.dataset.state || '').toLowerCase().trim();
+        const dataLand = (el.dataset.land || '').toLowerCase().trim();
+        const landId = (el.dataset.landId || '').toLowerCase().trim();
+        const name = (el.getAttribute('name') || '').toLowerCase().trim();
+        const className = (el.getAttribute('class') || '').toLowerCase().trim();
 
         const isMatch = targetAliases.some(alias => 
-            id === alias || dataState === alias || dataLand === alias || name === alias || className.includes(alias)
+            id === alias || 
+            dataState === alias || 
+            dataLand === alias || 
+            landId === alias || 
+            name === alias || 
+            className.includes(alias) ||
+            (alias.length > 2 && (id.includes(alias) || name.includes(alias)))
         );
 
         if (state !== '' && isMatch) {
@@ -168,7 +179,6 @@ function displayResults(data) {
         const card = document.createElement('div');
         card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group cursor-pointer';
         
-        // Clic sur une plaque -> Sélectionne le Land et le met en surbrillance sur la carte
         card.onclick = () => selectState(item.state);
 
         card.innerHTML = `
