@@ -15,11 +15,13 @@ async function loadData() {
 
 function initStatesFilter() {
     const container = document.getElementById('statesFilterContainer');
+    if (!container) return;
+    
     const states = [...new Set(platesData.map(item => item.state))].sort();
 
     const allBtn = document.createElement('button');
     allBtn.id = 'btn-all';
-    allBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+    allBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
     allBtn.textContent = '🇩🇪 Tous les Länder';
     allBtn.onclick = () => selectState('');
     container.appendChild(allBtn);
@@ -27,7 +29,7 @@ function initStatesFilter() {
     states.forEach(state => {
         const btn = document.createElement('button');
         btn.dataset.state = state;
-        btn.className = 'state-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+        btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
         btn.textContent = state;
         btn.onclick = () => selectState(state);
         container.appendChild(btn);
@@ -47,25 +49,23 @@ function initMapEvents() {
 function selectState(state) {
     selectedState = state;
     
-    // Mise à jour des boutons
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
     
     buttons.forEach(btn => {
         if (btn.dataset.state === state) {
-            btn.className = 'state-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
         } else {
-            btn.className = 'state-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
         }
     });
 
     if (allBtn) {
         allBtn.className = state === '' 
-            ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30'
-            : 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+            ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30'
+            : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     }
 
-    // Mise à jour de la carte SVG
     const paths = document.querySelectorAll('#germanyMap .land-path');
     paths.forEach(path => {
         if (path.dataset.state === state) {
@@ -83,7 +83,9 @@ function displayResults(data) {
     const countLabel = document.getElementById('resultCount');
     grid.innerHTML = '';
     
-    countLabel.textContent = `${data.length} résultat(s) affiché(s)`;
+    if (countLabel) {
+        countLabel.textContent = `${data.length} résultat(s) affiché(s)`;
+    }
 
     if (data.length === 0) {
         grid.innerHTML = `
@@ -120,20 +122,46 @@ function displayResults(data) {
     });
 }
 
+// Algorithme de filtrage intelligent avec tri par pertinence
 function filterData() {
     const term = document.getElementById('searchInput').value.toLowerCase().trim();
     
-    const filtered = platesData.filter(item => {
-        const matchesSearch = 
-            item.prefix.toLowerCase().includes(term) ||
-            item.city.toLowerCase().includes(term) ||
-            item.state.toLowerCase().includes(term) ||
-            item.region.toLowerCase().includes(term);
-        
+    let filtered = platesData.filter(item => {
         const matchesState = selectedState === '' || item.state === selectedState;
+        if (!matchesState) return false;
 
-        return matchesSearch && matchesState;
+        if (term === '') return true;
+
+        const prefixMatch = item.prefix.toLowerCase().includes(term);
+        const cityMatch = item.city.toLowerCase().includes(term);
+        const stateMatch = item.state.toLowerCase().includes(term);
+
+        return prefixMatch || cityMatch || stateMatch;
     });
+
+    // Tri par ordre de pertinence
+    if (term !== '') {
+        filtered.sort((a, b) => {
+            const prefixA = a.prefix.toLowerCase();
+            const prefixB = b.prefix.toLowerCase();
+            const cityA = a.city.toLowerCase();
+            const cityB = b.city.toLowerCase();
+
+            // 1. Correspondance exacte du préfixe en premier (ex: "K" -> Köln)
+            if (prefixA === term && prefixB !== term) return -1;
+            if (prefixB === term && prefixA !== term) return 1;
+
+            // 2. Le préfixe commence par la recherche (ex: "KA", "KL")
+            if (prefixA.startsWith(term) && !prefixB.startsWith(term)) return -1;
+            if (prefixB.startsWith(term) && !prefixA.startsWith(term)) return 1;
+
+            // 3. Le nom de la ville commence par la recherche (ex: "Köln", "Kassel")
+            if (cityA.startsWith(term) && !cityB.startsWith(term)) return -1;
+            if (cityB.startsWith(term) && !cityA.startsWith(term)) return 1;
+
+            return 0;
+        });
+    }
 
     displayResults(filtered);
 }
