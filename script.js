@@ -121,12 +121,8 @@ function selectState(state) {
 }
 
 function updateHeroPlate(item) {
-    const prefixEl = document.getElementById('heroPlatePrefix');
-    const cityEl = document.getElementById('heroPlateCity');
-    if (prefixEl && cityEl && item) {
-        prefixEl.textContent = item.prefix;
-        cityEl.textContent = item.city;
-    }
+    // Désactivé pour conserver l'image d'accueil fixe
+    return;
 }
 
 function displayResults(data) {
