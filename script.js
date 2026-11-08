@@ -38,7 +38,15 @@ function initStatesFilter() {
 
 function initMapEvents() {
     const paths = document.querySelectorAll('#germanyMap .land-path');
+    const label = document.getElementById('mapHoverLabel');
+
     paths.forEach(path => {
+        path.addEventListener('mouseenter', () => {
+            if (label) label.textContent = path.dataset.state;
+        });
+        path.addEventListener('mouseleave', () => {
+            if (label) label.textContent = selectedState || 'Toutes les régions';
+        });
         path.addEventListener('click', () => {
             const state = path.dataset.state;
             selectState(selectedState === state ? '' : state);
@@ -51,7 +59,9 @@ function selectState(state) {
     
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
-    
+    const label = document.getElementById('mapHoverLabel');
+    if (label) label.textContent = state || 'Toutes les régions';
+
     buttons.forEach(btn => {
         if (btn.dataset.state === state) {
             btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
@@ -91,7 +101,7 @@ function displayResults(data) {
         grid.innerHTML = `
             <div class="col-span-2 text-center py-12 bg-slate-800/40 rounded-2xl border border-slate-700/50">
                 <p class="text-slate-300 font-medium">Aucun résultat trouvé.</p>
-                <p class="text-xs text-slate-500 mt-1">Si la case "Préfixe exact" est cochée, essayez de la décocher pour chercher par nom de ville.</p>
+                <p class="text-xs text-slate-500 mt-1">Si la case "Préfixe exact" est cochée, décochez-la pour effectuer une recherche plus large.</p>
             </div>`;
         return;
     }
@@ -124,7 +134,8 @@ function displayResults(data) {
 
 function filterData() {
     const term = document.getElementById('searchInput').value.toLowerCase().trim();
-    const isExactMatch = document.getElementById('exactMatchCheckbox').checked;
+    const exactCheckbox = document.getElementById('exactMatchCheckbox');
+    const isExactMatch = exactCheckbox ? exactCheckbox.checked : false;
     
     let filtered = platesData.filter(item => {
         const matchesState = selectedState === '' || item.state === selectedState;
@@ -133,10 +144,8 @@ function filterData() {
         if (term === '') return true;
 
         if (isExactMatch) {
-            // Mode exact : le préfixe doit correspondre exactement au terme saisi
             return item.prefix.toLowerCase() === term;
         } else {
-            // Mode recherche globale
             return item.prefix.toLowerCase().includes(term) ||
                    item.city.toLowerCase().includes(term) ||
                    item.state.toLowerCase().includes(term) ||
@@ -148,6 +157,7 @@ function filterData() {
 }
 
 document.getElementById('searchInput').addEventListener('input', filterData);
-document.getElementById('exactMatchCheckbox').addEventListener('change', filterData);
+const exactCb = document.getElementById('exactMatchCheckbox');
+if (exactCb) exactCb.addEventListener('change', filterData);
 
 loadData();
