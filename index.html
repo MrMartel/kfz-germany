@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kfz-Kennzeichen Finder - Carte Interactive des Länder</title>
+    <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .land-path {
-            fill: #1e293b;
-            stroke: #475569;
-            stroke-width: 1.2;
+            fill: #334155;
+            stroke: #1e293b;
+            stroke-width: 1.5;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
         }
         .land-path:hover {
             fill: #3b82f6;
@@ -20,121 +20,64 @@
         }
         .land-path.active {
             fill: #2563eb;
-            stroke: #bfdbfe;
+            stroke: #60a5fa;
             stroke-width: 2.5;
-            filter: drop-shadow(0px 0px 6px rgba(37, 99, 235, 0.6));
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
-
-    <div class="max-w-6xl mx-auto space-y-6">
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-3xl font-bold tracking-tight text-white">Kfz-Kennzeichen Finder</h1>
-            <p class="text-slate-400 text-sm">Encyclopédie interactive des préfixes d'immatriculation en Allemagne</p>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
+    <div class="max-w-5xl mx-auto px-4 py-10">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
+            <p class="text-slate-400 text-sm">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
         </header>
 
-        <!-- Barre de recherche -->
-        <div class="max-w-xl mx-auto space-y-3">
-            <div class="relative">
-                <input type="text" id="search-input" placeholder="Rechercher par préfixe ou par ville..." 
-                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 shadow-inner">
-            </div>
-            <div class="flex items-center space-x-2 text-xs text-slate-400 px-1">
-                <input type="checkbox" id="exact-match" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
-                <label for="exact-match">Préfixe exact uniquement</label>
-            </div>
+        <div class="max-w-2xl mx-auto mb-6">
+            <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." class="w-full pl-4 pr-4 py-3.5 rounded-2xl bg-slate-800 text-white border border-slate-700 mb-2">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                <input type="checkbox" id="exactMatchCheckbox" checked class="w-4 h-4 text-blue-600 rounded">
+                <span>Préfixe exact uniquement</span>
+            </label>
         </div>
 
-        <!-- Section Carte + Filtres -->
-        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <!-- Carte SVG Interactive -->
-            <div class="lg:col-span-5 flex justify-center items-center p-2 bg-slate-950/40 rounded-xl border border-slate-800/50">
-                <svg id="germany-map" viewBox="0 0 600 800" class="w-full h-auto max-h-[380px] drop-shadow-md">
-                    <g id="land-paths">
-                        <path id="DE-SH" class="land-path" data-land="Schleswig-Holstein" d="M210,40 L290,30 L310,90 L260,150 L200,120 Z" />
-                        <path id="DE-HH" class="land-path" data-land="Hambourg" d="M235,135 L255,130 L260,145 L240,150 Z" />
-                        <path id="DE-MV" class="land-path" data-land="Mecklenbourg-Poméranie-Occidentale" d="M295,35 L480,50 L490,140 L320,130 Z" />
-                        <path id="DE-HB" class="land-path" data-land="Brême" d="M185,160 L200,155 L205,170 L190,175 Z" />
-                        <path id="DE-NI" class="land-path" data-land="Basse-Saxe" d="M120,140 L310,135 L330,230 L240,280 L140,230 Z" />
-                        <path id="DE-BE" class="land-path" data-land="Berlin" d="M445,215 L465,210 L470,230 L450,235 Z" />
-                        <path id="DE-BB" class="land-path" data-land="Brandebourg" d="M325,135 L495,145 L510,310 L380,310 Z" />
-                        <path id="DE-ST" class="land-path" data-land="Saxe-Anhalt" d="M315,220 L385,220 L395,330 L325,340 Z" />
-                        <path id="DE-NW" class="land-path" data-land="Rhénanie-du-Nord-Westphalie" d="M70,240 L210,240 L210,370 L90,380 Z" />
-                        <path id="DE-SN" class="land-path" data-land="Saxe" d="M390,305 L520,295 L490,390 L390,360 Z" />
-                        <path id="DE-HE" class="land-path" data-land="Hesse" d="M190,350 L275,340 L260,480 L180,450 Z" />
-                        <path id="DE-TH" class="land-path" data-land="Thuringe" d="M270,335 L385,335 L380,420 L260,420 Z" />
-                        <path id="DE-RP" class="land-path" data-land="Rhénanie-Palatinat" d="M90,390 L185,390 L170,510 L100,480 Z" />
-                        <path id="DE-SL" class="land-path" data-land="Sarre" d="M100,490 L135,485 L130,525 L95,520 Z" />
-                        <path id="DE-BW" class="land-path" data-land="Bade-Wurtemberg" d="M140,510 L260,500 L240,680 L140,660 Z" />
-                        <path id="DE-BY" class="land-path" data-land="Bavière" d="M255,425 L450,410 L480,680 L235,680 Z" />
-                    </g>
-                </svg>
-            </div>
+        <div class="bg-slate-800/60 rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                
+                <!-- CARTE SVG -->
+                <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                    <svg id="germanyMap" version="1.0" viewBox="0 0 600 850" class="w-full max-w-[210px] h-auto">
+                        <g transform="translate(-10,-10)">
+                            <path class="land-path" data-state="Schleswig-Holstein" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Hambourg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Basse-Saxe" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Brême" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Hesse" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Rhénanie-Palatinat" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Bade-Wurtemberg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Bavière" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Sarre" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Berlin" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Brandebourg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Saxe-Anhalt" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Saxe" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Thuringe" d="COPIER_LE_TRACÉ_ICI" />
+                        </g>
+                    </svg>
+                    <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
+                </div>
 
-            <!-- Liste des Boutons de Filtrage -->
-            <div class="lg:col-span-7 space-y-4">
-                <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Filtrer par Land</div>
-                <div class="flex flex-wrap gap-2" id="land-buttons">
-                    <button data-land="all" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-600 text-white shadow-sm transition">Tous les Länder</button>
-                    <button data-land="Bade-Wurtemberg" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Bade-Wurtemberg</button>
-                    <button data-land="Basse-Saxe" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Basse-Saxe</button>
-                    <button data-land="Bavière" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Bavière</button>
-                    <button data-land="Berlin" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Berlin</button>
-                    <button data-land="Brandebourg" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Brandebourg</button>
-                    <button data-land="Brême" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Brême</button>
-                    <button data-land="Hambourg" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Hambourg</button>
-                    <button data-land="Hesse" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Hesse</button>
-                    <button data-land="Mecklenbourg-Poméranie-Occidentale" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Mecklenbourg-Poméranie-Occidentale</button>
-                    <button data-land="Rhénanie-Palatinat" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Rhénanie-Palatinat</button>
-                    <button data-land="Rhénanie-du-Nord-Westphalie" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Rhénanie-du-Nord-Westphalie</button>
-                    <button data-land="Sarre" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Sarre</button>
-                    <button data-land="Saxe" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Saxe</button>
-                    <button data-land="Saxe-Anhalt" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Saxe-Anhalt</button>
-                    <button data-land="Schleswig-Holstein" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Schleswig-Holstein</button>
-                    <button data-land="Thuringe" class="land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Thuringe</button>
+                <div class="md:col-span-2">
+                    <div id="statesFilterContainer" class="flex flex-wrap gap-2"></div>
                 </div>
             </div>
         </div>
+
+        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
 
-    <!-- JavaScript de Synchronisation Bidirectionnelle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mapPaths = document.querySelectorAll('.land-path');
-            const landButtons = document.querySelectorAll('.land-btn');
-            
-            function selectLand(landName) {
-                // Highlighting SVG
-                mapPaths.forEach(path => {
-                    if (path.getAttribute('data-land') === landName) {
-                        path.classList.add('active');
-                    } else {
-                        path.classList.remove('active');
-                    }
-                });
-
-                // Style Boutons
-                landButtons.forEach(btn => {
-                    if (btn.getAttribute('data-land') === landName) {
-                        btn.className = "land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-600 text-white shadow-sm transition";
-                    } else {
-                        btn.className = "land-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
-                    }
-                });
-
-                // Appeler ta fonction JS d'origine pour mettre à jour les résultats de la liste
-                if (typeof filterPlateData === 'function') {
-                    filterPlateData(landName);
-                }
-            }
-
-            // Événements
-            mapPaths.forEach(path => path.addEventListener('click', () => selectLand(path.getAttribute('data-land'))));
-            landButtons.forEach(btn => btn.addEventListener('click', () => selectLand(btn.getAttribute('data-land'))));
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
