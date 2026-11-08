@@ -3,19 +3,46 @@ let selectedState = '';
 
 async function loadData() {
     try {
+        // Charger la base de données JSON
         const response = await fetch('data.json');
         platesData = await response.json();
+        
+        // Charger la carte SVG
+        await loadSVGMap();
+        
         initStatesFilter();
         initMapEvents();
         displayResults(platesData);
+        updateHeroPlate(platesData[0]);
     } catch (error) {
         console.error("Erreur de chargement :", error);
+    }
+}
+
+async function loadSVGMap() {
+    const container = document.getElementById('svgContainer');
+    if (!container) return;
+
+    try {
+        const svgResponse = await fetch('germany-map.svg');
+        if (svgResponse.ok) {
+            const svgText = await svgResponse.text();
+            container.innerHTML = svgText;
+            const svgElement = container.querySelector('svg');
+            if (svgElement) {
+                svgElement.id = 'germanyMap';
+                svgElement.classList.add('w-full', 'max-w-[240px]', 'h-auto');
+            }
+        }
+    } catch (e) {
+        console.warn("Impossible de charger germany-map.svg dynamiquement, vérifiez le nom du fichier SVG.", e);
     }
 }
 
 function initStatesFilter() {
     const container = document.getElementById('statesFilterContainer');
     if (!container) return;
+    container.innerHTML = '';
     
     const states = [...new Set(platesData.map(item => item.state))].sort();
 
@@ -37,18 +64,22 @@ function initStatesFilter() {
 }
 
 function initMapEvents() {
-    const paths = document.querySelectorAll('#germanyMap .land-path');
+    const paths = document.querySelectorAll('#germanyMap path, #germanyMap .land-path');
     const label = document.getElementById('mapHoverLabel');
 
     paths.forEach(path => {
+        const state = path.dataset.state || path.getAttribute('id') || path.getAttribute('name');
+        if (!state) return;
+        
+        path.classList.add('land-path');
+
         path.addEventListener('mouseenter', () => {
-            if (label) label.textContent = path.dataset.state;
+            if (label) label.textContent = state;
         });
         path.addEventListener('mouseleave', () => {
             if (label) label.textContent = selectedState || 'Toutes les régions';
         });
         path.addEventListener('click', () => {
-            const state = path.dataset.state;
             selectState(selectedState === state ? '' : state);
         });
     });
@@ -76,9 +107,10 @@ function selectState(state) {
             : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     }
 
-    const paths = document.querySelectorAll('#germanyMap .land-path');
+    const paths = document.querySelectorAll('#germanyMap path');
     paths.forEach(path => {
-        if (path.dataset.state === state) {
+        const pathState = path.dataset.state || path.getAttribute('id') || path.getAttribute('name');
+        if (pathState === state && state !== '') {
             path.classList.add('active');
         } else {
             path.classList.remove('active');
@@ -86,6 +118,15 @@ function selectState(state) {
     });
 
     filterData();
+}
+
+function updateHeroPlate(item) {
+    const prefixEl = document.getElementById('heroPlatePrefix');
+    const cityEl = document.getElementById('heroPlateCity');
+    if (prefixEl && cityEl && item) {
+        prefixEl.textContent = item.prefix;
+        cityEl.textContent = item.city;
+    }
 }
 
 function displayResults(data) {
@@ -106,10 +147,15 @@ function displayResults(data) {
         return;
     }
 
+    // Met à jour la plaque d'accueil avec le 1er résultat trouvé
+    updateHeroPlate(data[0]);
+
     data.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group';
+        card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group cursor-pointer';
         
+        card.onclick = () => updateHeroPlate(item);
+
         card.innerHTML = `
             <div class="flex border-2 border-slate-700 rounded-xl overflow-hidden bg-white shadow-md shrink-0 w-32 h-16 items-center group-hover:scale-105 transition-transform">
                 <div class="bg-blue-700 text-white w-7 h-full flex flex-col items-center justify-between py-1.5 shadow-inner">
