@@ -1,35 +1,83 @@
-<svg id="germanyMap" version="1.0" viewBox="0 0 591.504 808.504" class="w-full max-w-[400px] h-auto">
-    <g transform="translate(-10,-10)">
-        <path class="land-path" data-state="Schleswig-Holstein" d="M228.91811,189.65484 L229.28424,192.30806 L226.39803,195.95251 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kfz-Kennzeichen Finder — Plaques Allemandes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .land-path {
+            fill: #334155;
+            stroke: #1e293b;
+            stroke-width: 1.5;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .land-path:hover {
+            fill: #3b82f6;
+            stroke: #93c5fd;
+            stroke-width: 2;
+        }
+        .land-path.active {
+            fill: #2563eb;
+            stroke: #60a5fa;
+            stroke-width: 2.5;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-slate-100 antialiased">
+    <div class="max-w-5xl mx-auto px-4 py-10">
         
-        <path class="land-path" data-state="Hambourg" d="M260.67207,178.63007 L258.91986,178.8504 L258.46973,179.80775 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Basse-Saxe" d="M197.80918,172.95556 L196.42588,175.76566 L192.12879,174.66444 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Brême" d="M193.18376,197.66986 L192.00034,200.75806 L189.70932,199.16709 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="M152.00392,305.81156 L152.48421,308.20456 L154.51261,309.84501 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Hesse" d="M259.9536,400.99971 L262.11211,402.7303 L261.35415,404.09579 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Rhénanie-Palatinat" d="M149.69741,455.5186 L147.24783,456.98595 L147.46467,458.74902 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Bade-Wurtemberg" d="M228.32454,586.35339 L225.80806,589.65867 L226.04618,592.51817 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Bavière" d="M296.65759,484.58882 L297.69722,485.45423 L300.74235,483.56839 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Sarre" d="M102.79336,547.43003 L100.86591,550.05739 L101.46445,552.12871 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Berlin" d="M460.67232,254.76451 L457.94065,257.06979 L458.6015,260.66986 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Brandebourg" d="M386.66699,150.31604 L384.66444,151.78339 L381.18567,150.56943 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="M336.83788,141.5173 L336.21639,144.18181 L331.33235,144.02021 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Saxe-Anhalt" d="M298.36706,231.10984 L298.54922,234.33299 L295.14321,235.85043 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Saxe" d="M410.51866,350.27981 L408.06909,352.54131 L405.61951,353.11181 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-        
-        <path class="land-path" data-state="Thuringe" d="M333.6543,401.76451 L333.91605,404.18847 L330.40798,406.82022 ..." style="fill:#334155;fill-opacity:1;stroke:#1e293b;stroke-width:1.97655309;stroke-miterlimit:4;stroke-dasharray:none" />
-    </g>
-</svg>
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Kfz-Kennzeichen Finder</h1>
+            <p class="text-slate-400 text-sm">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto mb-6">
+            <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." class="w-full pl-4 pr-4 py-3.5 rounded-2xl bg-slate-800 text-white border border-slate-700 mb-2">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                <input type="checkbox" id="exactMatchCheckbox" checked class="w-4 h-4 text-blue-600 rounded">
+                <span>Préfixe exact uniquement</span>
+            </label>
+        </div>
+
+        <div class="bg-slate-800/60 rounded-2xl border border-slate-700/80 p-6 mb-8 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                
+                <!-- CARTE SVG -->
+                <div class="md:col-span-1 flex flex-col items-center justify-center bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                    <svg id="germanyMap" version="1.0" viewBox="0 0 600 850" class="w-full max-w-[210px] h-auto">
+                        <g transform="translate(-10,-10)">
+                            <path class="land-path" data-state="Schleswig-Holstein" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Hambourg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Basse-Saxe" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Brême" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Rhénanie-du-Nord-Westphalie" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Hesse" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Rhénanie-Palatinat" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Bade-Wurtemberg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Bavière" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Sarre" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Berlin" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Brandebourg" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Mecklemburg-Poméranie-Occidentale" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Saxe-Anhalt" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Saxe" d="COPIER_LE_TRACÉ_ICI" />
+                            <path class="land-path" data-state="Thuringe" d="COPIER_LE_TRACÉ_ICI" />
+                        </g>
+                    </svg>
+                    <span id="mapHoverLabel" class="text-[11px] font-medium text-slate-400 mt-2 h-4 text-center">Toutes les régions</span>
+                </div>
+
+                <div class="md:col-span-2">
+                    <div id="statesFilterContainer" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
