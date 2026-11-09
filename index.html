@@ -19,6 +19,8 @@
             letter-spacing: 0.12em;
         }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b1120">
 </head>
 <body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative">
 
@@ -33,10 +35,10 @@
         <img src="Images/image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="max-w-[400px] w-[90%] h-auto block mx-auto mb-4 rounded-lg shadow-2xl">
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
         
-        <!-- Pastille de version V3 Final -->
+        <!-- Pastille de version -->
     <div class="mt-2 mb-1 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
         <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-        <span class="text-xs font-mono font-semibold text-emerald-300 tracking-wider">v3.0.0</span>
+        <span class="text-xs font-mono font-semibold text-emerald-300 tracking-wider">v4.0.0</span>
     </div>
 
         <p class="text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
@@ -158,5 +160,14 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('Service Worker enregistré avec succès !', reg))
+            .catch(err => console.error('Erreur Service Worker :', err));
+        });
+    }
+    </script>
 </body>
 </html>
