@@ -71,11 +71,109 @@ async function loadSVGMap() {
         if (svgElement) {
             svgElement.id = 'germanyMap';
             svgElement.classList.add('w-full', 'max-w-[240px]', 'h-auto');
+            setupMapInteractivity(svgElement);
         }
         highlightMapState(selectedState);
     } else {
         container.innerHTML = `<span class="text-xs text-amber-400 text-center">Carte SVG introuvable</span>`;
     }
+}
+
+function matchShapeToState(str) {
+    const states = [...new Set(platesData.map(item => item.state))];
+
+    for (const state of states) {
+        const item = platesData.find(d => d.state === state);
+        const landId = item ? (item.landId || '').toLowerCase().trim() : '';
+        const stateClean = state.toLowerCase().trim();
+
+        let isMatch = false;
+        if (landId === 'bw' || stateClean.includes('bade') || stateClean.includes('baden')) {
+            isMatch = /\b(de[-_]?bw|bw|baden|w[uüe]+r[t]+emberg)\b/i.test(str) || str.includes('bw') || str.includes('baden');
+        } else if (landId === 'bayern' || stateClean.includes('bav')) {
+            isMatch = /\b(de[-_]?by|by|bayern|bavaria|baviere|bavière)\b/i.test(str);
+        } else if (landId === 'berlin' || stateClean === 'berlin') {
+            isMatch = /\b(de[-_]?be|be|berlin)\b/i.test(str) && !str.includes('berg');
+        } else if (landId === 'brandenburg' || stateClean.includes('brand')) {
+            isMatch = /\b(de[-_]?bb|bb|brandenburg|brandebourg)\b/i.test(str);
+        } else if (landId === 'bremen' || stateClean.includes('brê') || stateClean.includes('brem')) {
+            isMatch = /\b(de[-_]?hb|hb|bremen|breme|brême)\b/i.test(str);
+        } else if (landId === 'hamburg' || stateClean.includes('hamb')) {
+            isMatch = /\b(de[-_]?hh|hh|hamburg|hambourg)\b/i.test(str);
+        } else if (landId === 'hessen' || stateClean.includes('hess')) {
+            isMatch = /\b(de[-_]?he|he|hessen|hesse)\b/i.test(str) && !/\brhein\b/i.test(str);
+        } else if (landId === 'mv' || stateClean.includes('meckl')) {
+            isMatch = /\b(de[-_]?mv|mv|mecklenburg|mecklemburg|vorpommern|pomeranie)\b/i.test(str);
+        } else if (landId === 'niedersachsen' || stateClean.includes('basse')) {
+            isMatch = /\b(de[-_]?ni|ni|niedersachsen|basse[-_]?saxe|lower[-_]?saxony)\b/i.test(str);
+        } else if (landId === 'nrw' || stateClean.includes('nord')) {
+            isMatch = /\b(de[-_]?nw|de[-_]?nrw|nw|nrw|nordrhein|westfalen)\b/i.test(str);
+        } else if (landId === 'rlp' || stateClean.includes('palat')) {
+            isMatch = (/\b(de[-_]?rp|rp|rlp|rheinland|pfalz|palatinat)\b/i.test(str)) && !/\bvorpommern\b/i.test(str);
+        } else if (landId === 'saarland' || stateClean.includes('sarr')) {
+            isMatch = /\b(de[-_]?sl|sl|saarland|sarre)\b/i.test(str);
+        } else if (landId === 'sachsen' || stateClean === 'saxe') {
+            isMatch = /\b(de[-_]?sn|sn|sachsen|saxe)\b/i.test(str) && !/\b(anhalt|nieder|basse)\b/i.test(str);
+        } else if (landId === 'st' || stateClean.includes('anhalt')) {
+            isMatch = /\b(de[-_]?st|st|anhalt)\b/i.test(str) && !/\bholstein\b/i.test(str);
+        } else if (landId === 'sh' || stateClean.includes('schles')) {
+            isMatch = /\b(de[-_]?sh|sh|schleswig|holstein)\b/i.test(str);
+        } else if (landId === 'thueringen' || stateClean.includes('thur')) {
+            isMatch = /\b(de[-_]?th|th|thüringen|thueringen|thuringe)\b/i.test(str);
+        }
+
+        if (isMatch) return state;
+    }
+    return null;
+}
+
+function setupMapInteractivity(svg) {
+    const tooltip = document.getElementById('mapTooltip');
+    const tooltipName = document.getElementById('tooltipStateName');
+    const tooltipCount = document.getElementById('tooltipPlateCount');
+
+    const shapes = svg.querySelectorAll('path, polygon, rect, circle, use');
+
+    shapes.forEach(el => {
+        let attrString = '';
+        let current = el;
+        while (current && current !== svg && current.tagName !== 'svg') {
+            if (current.id) attrString += ' ' + current.id;
+            if (current.getAttribute('name')) attrString += ' ' + current.getAttribute('name');
+            if (current.getAttribute('class')) attrString += ' ' + current.getAttribute('class');
+            if (current.dataset) {
+                if (current.dataset.state) attrString += ' ' + current.dataset.state;
+                if (current.dataset.land) attrString += ' ' + current.dataset.land;
+                if (current.dataset.landId) attrString += ' ' + current.dataset.landId;
+            }
+            current = current.parentElement;
+        }
+
+        const matchedState = matchShapeToState(attrString.toLowerCase());
+
+        if (matchedState) {
+            el.style.cursor = 'pointer';
+
+            el.addEventListener('mousemove', (e) => {
+                if (!tooltip) return;
+                const plateCount = platesData.filter(d => d.state === matchedState).length;
+                tooltipName.textContent = matchedState;
+                tooltipCount.textContent = `${plateCount} préfixe(s) enregistré(s)`;
+                
+                tooltip.style.left = `${e.clientX}px`;
+                tooltip.style.top = `${e.clientY - 10}px`;
+                tooltip.classList.remove('hidden');
+            });
+
+            el.addEventListener('mouseleave', () => {
+                if (tooltip) tooltip.classList.add('hidden');
+            });
+
+            el.addEventListener('click', () => {
+                selectState(matchedState);
+            });
+        }
+    });
 }
 
 function initStatesFilter() {
@@ -124,7 +222,6 @@ function selectState(state) {
             : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     }
 
-    // Mise à jour dynamique de l'armoirie principale
     const mainCoatImg = document.getElementById('stateCoatOfArmsDisplay');
     const mainCoatTitle = document.getElementById('stateCoatOfArmsTitle');
     
