@@ -1,7 +1,7 @@
 let platesData = [];
 let selectedState = '';
 
-// Dictionnaire pointant exactement vers le sous-dossier Images/Armoiries_Landers/
+// Dictionnaire ciblant directement le sous-dossier Images/Armoiries_Landers/
 const stateCoatOfArms = {
     'bw': 'Images/Armoiries_Landers/amr_bw.svg',
     'bayern': 'Images/Armoiries_Landers/amr_by.svg',
@@ -51,7 +51,8 @@ async function loadSVGMap() {
     const container = document.getElementById('svgContainer');
     if (!container) return;
 
-    const mapFiles = ['germany-map.svg.svg', 'germany-map.svg'];
+    // Ordre de recherche avec le nouveau chemin propre dans Images/
+    const mapFiles = ['Images/germany-map.svg', 'germany-map.svg.svg', 'germany-map.svg'];
     let svgText = null;
 
     for (const file of mapFiles) {
