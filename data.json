@@ -385,5 +385,6 @@
   { "prefix": "ZR", "city": "Zeulenroda", "state": "Thuringe", "region": "Arrondissement de Greiz", "landId": "thueringen" },
   { "prefix": "ZS", "city": "Zschopau", "state": "Saxe", "region": "Arrondissement des Monts-Métallifères", "landId": "sachsen" },
   { "prefix": "ZW", "city": "Zweibrücken", "state": "Rhénanie-Palatinat", "region": "Ville de Deux-Ponts (Zweibrücken)", "landId": "rlp" },
+  { "prefix": "BD", "city": "Organes constitutionnels fédéraux", "state": "Fédéral", "landId": "bund", "region": "Véhicules des organes constitutionnels (Bundestag, Bundesrat, Présidence fédérale, Gouvernement fédéral, Cour constitutionnelle)"},
   { "prefix": "ZZ", "city": "Zeitz", "state": "Saxe-Anhalt", "region": "Arrondissement du Burgenland", "landId": "st" }
 ]
