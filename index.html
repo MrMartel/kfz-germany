@@ -19,6 +19,8 @@
             letter-spacing: 0.12em;
         }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b1120">
 </head>
 <body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative">
 
@@ -156,7 +158,16 @@
             </div>
         </div>
     </div>
-
+    
     <script src="script.js"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('Service Worker enregistré avec succès !', reg))
+            .catch(err => console.error('Erreur Service Worker :', err));
+        });
+    }
+    </script>
 </body>
 </html>

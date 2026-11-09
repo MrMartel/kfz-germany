@@ -1,0 +1,16 @@
+{
+  "short_name": "Kfz Finder",
+  "name": "Kfz-Kennzeichen Finder Germany",
+  "icons": [
+    {
+      "src": "Images/apple-touch-icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "display": "standalone",
+  "orientation": "portrait"
+}
