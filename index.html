@@ -50,7 +50,7 @@
                 <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." 
                        class="w-full pl-5 pr-12 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
                 
-                <!-- Bouton Effacer -->
+                <!-- Bouton Effacer la recherche -->
                 <button id="clearSearchBtn" class="absolute right-3 hidden text-slate-400 hover:text-white bg-slate-700/60 hover:bg-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all">
                     ✕
                 </button>
@@ -65,8 +65,14 @@
         <!-- Tableau de bord : Carte, Filtres & Armoirie dynamique -->
         <section class="bg-slate-800/50 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row gap-6 items-stretch shadow-xl">
             
-            <!-- Conteneur Carte SVG -->
-            <div class="flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
+            <!-- Conteneur Carte SVG avec bouton de désélection -->
+            <div class="relative flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
+                
+                <!-- Croix de désélection (masquée par défaut) -->
+                <button id="clearMapSelectionBtn" title="Réinitialiser le filtre de région" class="absolute top-3 right-3 hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-md z-10">
+                    ✕
+                </button>
+
                 <div id="svgContainer" class="w-full flex justify-center items-center"></div>
                 <span id="mapHoverLabel" class="text-xs font-medium text-slate-400 mt-3">Toutes les régions</span>
             </div>
@@ -96,14 +102,14 @@
         ↑
     </button>
 
-    <!-- Modale de détail avec l'image PNG avec fond blanc d'origine -->
+    <!-- Modale de détail -->
     <div id="plateModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div id="modalContent" class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-lg w-full p-6 md:p-8 relative shadow-2xl transform transition-all scale-95 opacity-0">
             <button onclick="closePlateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center transition-colors z-10">
                 ✕
             </button>
             
-            <!-- Plaque grand format utilisant ton image plaque_allemande_vierge_blanc.png -->
+            <!-- Plaque grand format -->
             <div class="relative w-full aspect-[520/110] bg-contain bg-center bg-no-repeat flex items-center justify-center mb-6 drop-shadow-2xl" style="background-image: url('Images/plaque_allemande_vierge_blanc.png');">
                 <div id="modalPrefix" class="w-full text-center pl-[17%] font-bold plate-font text-5xl md:text-6xl text-slate-900 uppercase select-none">
                     --

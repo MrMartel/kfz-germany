@@ -37,6 +37,7 @@ async function loadData() {
         initStatesFilter();
         displayResults(filteredPlatesData);
         setupSearchControls();
+        setupMapClearControl();
         setupBackToTop();
         setupModalNavigation();
     } catch (error) {
@@ -49,6 +50,15 @@ async function loadData() {
                     <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez la casse du fichier sur GitHub Pages.</p>
                 </div>`;
         }
+    }
+}
+
+function setupMapClearControl() {
+    const clearMapBtn = document.getElementById('clearMapSelectionBtn');
+    if (clearMapBtn) {
+        clearMapBtn.addEventListener('click', () => {
+            selectState('');
+        });
     }
 }
 
@@ -257,7 +267,18 @@ function selectState(state) {
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
     const label = document.getElementById('mapHoverLabel');
+    const clearMapBtn = document.getElementById('clearMapSelectionBtn');
+
     if (label) label.textContent = state || 'Toutes les régions';
+
+    // Gestion d'affichage du bouton effacer sur la carte
+    if (clearMapBtn) {
+        if (state !== '') {
+            clearMapBtn.classList.remove('hidden');
+        } else {
+            clearMapBtn.classList.add('hidden');
+        }
+    }
 
     buttons.forEach(btn => {
         if (btn.dataset.state === state) {
