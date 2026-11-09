@@ -33,6 +33,7 @@ async function loadData() {
         platesData = await response.json();
         initStatesFilter();
         displayResults(platesData);
+        setupSearchControls();
     } catch (error) {
         console.error("Erreur de chargement data.json :", error);
         const grid = document.getElementById('resultsGrid');
@@ -43,6 +44,34 @@ async function loadData() {
                     <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez la casse du fichier sur GitHub Pages.</p>
                 </div>`;
         }
+    }
+}
+
+function setupSearchControls() {
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    const exactCb = document.getElementById('exactMatchCheckbox');
+
+    if (searchInput && clearBtn) {
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.trim().length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            filterData();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            searchInput.focus();
+            filterData();
+        });
+    }
+
+    if (exactCb) {
+        exactCb.addEventListener('change', filterData);
     }
 }
 
@@ -458,9 +487,5 @@ function filterData() {
 
     displayResults(filtered);
 }
-
-document.getElementById('searchInput').addEventListener('input', filterData);
-const exactCb = document.getElementById('exactMatchCheckbox');
-if (exactCb) exactCb.addEventListener('change', filterData);
 
 loadData();

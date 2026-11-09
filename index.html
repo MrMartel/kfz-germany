@@ -33,12 +33,18 @@
 
     <main class="w-full max-w-5xl flex flex-col gap-6">
         
-        <!-- Zone de recherche -->
+        <!-- Zone de recherche avec bouton d'effacement rapide -->
         <section class="flex flex-col items-center gap-3">
-            <div class="w-full max-w-md">
+            <div class="w-full max-w-md relative flex items-center">
                 <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." 
-                       class="w-full px-5 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
+                       class="w-full pl-5 pr-12 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
+                
+                <!-- Bouton Effacer (masqué par défaut) -->
+                <button id="clearSearchBtn" class="absolute right-3 hidden text-slate-400 hover:text-white bg-slate-700/60 hover:bg-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all">
+                    ✕
+                </button>
             </div>
+            
             <label class="flex items-center gap-2 text-slate-400 text-xs md:text-sm cursor-pointer hover:text-slate-200 transition-colors" for="exactMatchCheckbox">
                 <input type="checkbox" id="exactMatchCheckbox" checked class="accent-blue-600 w-4 h-4 rounded cursor-pointer">
                 Préfixe exact uniquement
