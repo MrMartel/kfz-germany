@@ -1,6 +1,6 @@
-const CACHE_NAME = 'kfz-finder-v4.1';
+const CACHE_NAME = 'kfz-finder-v4.2';
 
-// Fichiers de base de l'application
+// Liste complète et explicite de toutes les ressources à précharger à l'installation
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,11 +10,28 @@ const ASSETS_TO_CACHE = [
   './Images/apple-touch-icon.png',
   './Images/image_accueil.png',
   './Images/germany-map.svg',
+  './Images/bundesadler.png',
+  './Images/baden-wurttemberg.png',
+  './Images/bayern.png',
+  './Images/berlin.png',
+  './Images/brandenburg.png',
+  './Images/bremen.png',
+  './Images/hamburg.png',
+  './Images/hessen.png',
+  './Images/mecklenburg-vorpommern.png',
+  './Images/niedersachsen.png',
+  './Images/nordrhein-westfalen.png',
+  './Images/rheinland-pfalz.png',
+  './Images/saarland.png',
+  './Images/sachsen.png',
+  './Images/sachsen-anhalt.png',
+  './Images/schleswig-holstein.png',
+  './Images/thuringen.png',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap'
 ];
 
-// Installation et mise en cache initiale des ressources clés
+// 1. Installation : Téléchargement complet et immédiat de TOUTES les ressources
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -24,7 +41,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Nettoyage des anciens caches lors de la mise à jour de version
+// 2. Activation : Suppression des anciens caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -36,16 +53,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Interception des requêtes avec mise en cache dynamique (Cache First, Network Fallback + Cache Save)
+// 3. Interception des requêtes : Servir depuis le cache d'abord
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      
       return fetch(event.request).then((networkResponse) => {
-        // Si la requête est valide, on met la réponse en cache (ex: images de modale chargées à la volée)
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
