@@ -1,6 +1,5 @@
-const CACHE_NAME = 'kfz-finder-v4.2';
+const CACHE_NAME = 'kfz-finder-v5.0';
 
-// Liste complète et explicite de toutes les ressources à précharger à l'installation
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,28 +9,29 @@ const ASSETS_TO_CACHE = [
   './Images/apple-touch-icon.png',
   './Images/image_accueil.png',
   './Images/germany-map.svg',
-  './Images/bundesadler.png',
-  './Images/baden-wurttemberg.png',
-  './Images/bayern.png',
-  './Images/berlin.png',
-  './Images/brandenburg.png',
-  './Images/bremen.png',
-  './Images/hamburg.png',
-  './Images/hessen.png',
-  './Images/mecklenburg-vorpommern.png',
-  './Images/niedersachsen.png',
-  './Images/nordrhein-westfalen.png',
-  './Images/rheinland-pfalz.png',
-  './Images/saarland.png',
-  './Images/sachsen.png',
-  './Images/sachsen-anhalt.png',
-  './Images/schleswig-holstein.png',
-  './Images/thuringen.png',
+  './Images/plaque_allemande_vierge_blanc.png',
+  './Images/macaron_CT.png',
+  './Images/Armoiries_Landers/amr_bw.svg',
+  './Images/Armoiries_Landers/amr_by.svg',
+  './Images/Armoiries_Landers/amr_be.svg',
+  './Images/Armoiries_Landers/amr_bb.svg',
+  './Images/Armoiries_Landers/amr_hb.svg',
+  './Images/Armoiries_Landers/amr_hh.svg',
+  './Images/Armoiries_Landers/amr_he.svg',
+  './Images/Armoiries_Landers/amr_mv.svg',
+  './Images/Armoiries_Landers/amr_ni.svg',
+  './Images/Armoiries_Landers/amr_nrw.svg',
+  './Images/Armoiries_Landers/amr_rlp.svg',
+  './Images/Armoiries_Landers/amr_sl.svg',
+  './Images/Armoiries_Landers/amr_sn.svg',
+  './Images/Armoiries_Landers/amr_st.svg',
+  './Images/Armoiries_Landers/amr_sh.svg',
+  './Images/Armoiries_Landers/amr_th.svg',
+  'https://upload.wikimedia.org/wikipedia/commons/d/da/Coat_of_arms_of_Germany.svg',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap'
 ];
 
-// 1. Installation : Téléchargement complet et immédiat de TOUTES les ressources
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -41,7 +41,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 2. Activation : Suppression des anciens caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -53,7 +52,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. Interception des requêtes : Servir depuis le cache d'abord
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

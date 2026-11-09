@@ -271,7 +271,6 @@ function selectState(state) {
 
     if (label) label.textContent = state || 'Toutes les régions';
 
-    // Gestion d'affichage du bouton effacer sur la carte
     if (clearMapBtn) {
         if (state !== '') {
             clearMapBtn.classList.remove('hidden');
@@ -413,8 +412,10 @@ function openPlateModal(item) {
     document.getElementById('modalLandId').textContent = item.landId ? item.landId.toUpperCase() : '-';
     document.getElementById('modalRegion').textContent = item.region;
 
-    const coatImg = document.getElementById('modalCoatOfArms') || document.getElementById('modalFlag');
     const landKey = (item.landId || '').toLowerCase().trim();
+
+    // 1. Armoiries sous le titre du Land dans la modale
+    const coatImg = document.getElementById('modalCoatOfArms');
     if (coatImg) {
         if (stateCoatOfArms[landKey]) {
             coatImg.src = stateCoatOfArms[landKey];
@@ -423,6 +424,12 @@ function openPlateModal(item) {
         } else {
             coatImg.classList.add('hidden');
         }
+    }
+
+    // 2. Sceau du Land dans le macaron inférieur de la plaque
+    const sealImg = document.getElementById('modalLandSeal');
+    if (sealImg) {
+        sealImg.src = stateCoatOfArms[landKey] || stateCoatOfArms['bund'];
     }
 
     const filterBtn = document.getElementById('modalFilterBtn');
