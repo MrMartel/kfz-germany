@@ -13,7 +13,7 @@ const stateCoatOfArms = {
     'mv': 'Images/Armoiries_Landers/amr_mv.svg',
     'niedersachsen': 'Images/Armoiries_Landers/amr_ni.svg',
     'nrw': 'Images/Armoiries_Landers/amr_nrw.svg',
-    'rlp': 'Images/Armoiries_Landers/Coat_of_arms_of_Rhineland-Palatinate.svg',
+    'rlp': 'Images/Armoiries_Landers/amr_rlp.svg',
     'saarland': 'Images/Armoiries_Landers/amr_sl.svg',
     'sachsen': 'Images/Armoiries_Landers/amr_sn.svg',
     'st': 'Images/Armoiries_Landers/amr_st.svg',
