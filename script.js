@@ -1,7 +1,6 @@
 let platesData = [];
 let selectedState = '';
 
-// Dictionnaire ciblant directement le sous-dossier Images/Armoiries_Landers/
 const stateCoatOfArms = {
     'bw': 'Images/Armoiries_Landers/amr_bw.svg',
     'bayern': 'Images/Armoiries_Landers/amr_by.svg',
@@ -13,13 +12,13 @@ const stateCoatOfArms = {
     'mv': 'Images/Armoiries_Landers/amr_mv.svg',
     'niedersachsen': 'Images/Armoiries_Landers/amr_ni.svg',
     'nrw': 'Images/Armoiries_Landers/amr_nrw.svg',
-    'rlp': 'Images/Armoiries_Landers/amr_rlp.svg',
+    'rlp': 'Images/Armoiries_Landers/Coat_of_arms_of_Rhineland-Palatinate.svg',
     'saarland': 'Images/Armoiries_Landers/amr_sl.svg',
     'sachsen': 'Images/Armoiries_Landers/amr_sn.svg',
     'st': 'Images/Armoiries_Landers/amr_st.svg',
     'sh': 'Images/Armoiries_Landers/amr_sh.svg',
     'thueringen': 'Images/Armoiries_Landers/amr_th.svg',
-    'bund': 'Images/Armoiries_Landers/amr_bund.svg'
+    'bund': 'https://upload.wikimedia.org/wikipedia/commons/d/da/Coat_of_arms_of_Germany.svg'
 };
 
 async function loadData() {
@@ -51,7 +50,6 @@ async function loadSVGMap() {
     const container = document.getElementById('svgContainer');
     if (!container) return;
 
-    // Ordre de recherche avec le nouveau chemin propre dans Images/
     const mapFiles = ['Images/germany-map.svg', 'germany-map.svg.svg', 'germany-map.svg'];
     let svgText = null;
 
@@ -126,6 +124,25 @@ function selectState(state) {
             : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
     }
 
+    // Mise à jour dynamique de l'armoirie principale
+    const mainCoatImg = document.getElementById('stateCoatOfArmsDisplay');
+    const mainCoatTitle = document.getElementById('stateCoatOfArmsTitle');
+    
+    if (mainCoatImg && mainCoatTitle) {
+        const item = platesData.find(d => d.state === state);
+        const landKey = item ? (item.landId || '').toLowerCase().trim() : 'bund';
+
+        if (state === '') {
+            mainCoatImg.src = stateCoatOfArms['bund'];
+            mainCoatImg.alt = "République fédérale d'Allemagne";
+            mainCoatTitle.textContent = "République fédérale d'Allemagne";
+        } else if (stateCoatOfArms[landKey]) {
+            mainCoatImg.src = stateCoatOfArms[landKey];
+            mainCoatImg.alt = `Armoiries ${state}`;
+            mainCoatTitle.textContent = state;
+        }
+    }
+
     highlightMapState(state);
     filterData();
 }
@@ -194,7 +211,7 @@ function highlightMapState(state) {
             } else if (landId === 'thueringen' || stateClean.includes('thur')) {
                 isMatch = /\b(de[-_]?th|th|thüringen|thueringen|thuringe)\b/i.test(str);
             } else if (landId === 'bund' || stateClean.includes('fédér')) {
-                isMatch = /\b(bund)\b/i.test(str);
+                isMatch = false;
             }
         }
 
