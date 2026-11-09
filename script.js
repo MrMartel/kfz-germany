@@ -1,25 +1,25 @@
 let platesData = [];
 let selectedState = '';
 
-// Dictionnaire ciblant directement Armoiries_Landers/
+// Dictionnaire pointant exactement vers le sous-dossier Images/Armoiries_Landers/
 const stateCoatOfArms = {
-    'bw': 'Armoiries_Landers/amr_bw.svg',
-    'bayern': 'Armoiries_Landers/amr_by.svg',
-    'berlin': 'Armoiries_Landers/amr_be.svg',
-    'brandenburg': 'Armoiries_Landers/amr_bb.svg',
-    'bremen': 'Armoiries_Landers/amr_hb.svg',
-    'hamburg': 'Armoiries_Landers/amr_hh.svg',
-    'hessen': 'Armoiries_Landers/amr_he.svg',
-    'mv': 'Armoiries_Landers/amr_mv.svg',
-    'niedersachsen': 'Armoiries_Landers/amr_ni.svg',
-    'nrw': 'Armoiries_Landers/amr_nrw.svg',
-    'rlp': 'Armoiries_Landers/amr_rl.svg',
-    'saarland': 'Armoiries_Landers/amr_sl.svg',
-    'sachsen': 'Armoiries_Landers/amr_sn.svg',
-    'st': 'Armoiries_Landers/amr_st.svg',
-    'sh': 'Armoiries_Landers/amr_sh.svg',
-    'thueringen': 'Armoiries_Landers/amr_th.svg',
-    'bund': 'Armoiries_Landers/amr_bund.svg'
+    'bw': 'Images/Armoiries_Landers/amr_bw.svg',
+    'bayern': 'Images/Armoiries_Landers/amr_by.svg',
+    'berlin': 'Images/Armoiries_Landers/amr_be.svg',
+    'brandenburg': 'Images/Armoiries_Landers/amr_bb.svg',
+    'bremen': 'Images/Armoiries_Landers/amr_hb.svg',
+    'hamburg': 'Images/Armoiries_Landers/amr_hh.svg',
+    'hessen': 'Images/Armoiries_Landers/amr_he.svg',
+    'mv': 'Images/Armoiries_Landers/amr_mv.svg',
+    'niedersachsen': 'Images/Armoiries_Landers/amr_ni.svg',
+    'nrw': 'Images/Armoiries_Landers/amr_nrw.svg',
+    'rlp': 'Images/Armoiries_Landers/Coat_of_arms_of_Rhineland-Palatinate.svg',
+    'saarland': 'Images/Armoiries_Landers/amr_sl.svg',
+    'sachsen': 'Images/Armoiries_Landers/amr_sn.svg',
+    'st': 'Images/Armoiries_Landers/amr_st.svg',
+    'sh': 'Images/Armoiries_Landers/amr_sh.svg',
+    'thueringen': 'Images/Armoiries_Landers/amr_th.svg',
+    'bund': 'Images/Armoiries_Landers/amr_bund.svg'
 };
 
 async function loadData() {
