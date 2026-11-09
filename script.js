@@ -1,4 +1,6 @@
 let platesData = [];
+let filteredPlatesData = [];
+let currentModalIndex = -1;
 let selectedState = '';
 
 const stateCoatOfArms = {
@@ -12,7 +14,7 @@ const stateCoatOfArms = {
     'mv': 'Images/Armoiries_Landers/amr_mv.svg',
     'niedersachsen': 'Images/Armoiries_Landers/amr_ni.svg',
     'nrw': 'Images/Armoiries_Landers/amr_nrw.svg',
-    'rlp': 'Images/Armoiries_Landers/Coat_of_arms_of_Rhineland-Palatinate.svg',
+    'rlp': 'Images/Armoiries_Landers/amr_rlp.svg',
     'saarland': 'Images/Armoiries_Landers/amr_sl.svg',
     'sachsen': 'Images/Armoiries_Landers/amr_sn.svg',
     'st': 'Images/Armoiries_Landers/amr_st.svg',
@@ -31,9 +33,12 @@ async function loadData() {
         }
         
         platesData = await response.json();
+        filteredPlatesData = [...platesData];
         initStatesFilter();
-        displayResults(platesData);
+        displayResults(filteredPlatesData);
         setupSearchControls();
+        setupBackToTop();
+        setupModalNavigation();
     } catch (error) {
         console.error("Erreur de chargement data.json :", error);
         const grid = document.getElementById('resultsGrid');
@@ -45,6 +50,23 @@ async function loadData() {
                 </div>`;
         }
     }
+}
+
+function setupBackToTop() {
+    const btn = document.getElementById('backToTopBtn');
+    if (!btn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btn.classList.remove('hidden');
+        } else {
+            btn.classList.add('hidden');
+        }
+    });
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }
 
 function setupSearchControls() {
@@ -362,6 +384,8 @@ function openPlateModal(item) {
     const content = document.getElementById('modalContent');
     if (!modal || !content) return;
 
+    currentModalIndex = filteredPlatesData.findIndex(p => p.prefix === item.prefix && p.city === item.city);
+
     document.getElementById('modalPrefix').textContent = item.prefix;
     document.getElementById('modalCity').textContent = item.city;
     document.getElementById('modalState').textContent = item.state;
@@ -388,11 +412,51 @@ function openPlateModal(item) {
         };
     }
 
+    updateModalNavState();
+
     modal.classList.remove('hidden');
     setTimeout(() => {
         content.classList.remove('scale-95', 'opacity-0');
         content.classList.add('scale-100', 'opacity-100');
     }, 10);
+}
+
+function setupModalNavigation() {
+    const prevBtn = document.getElementById('modalPrevBtn');
+    const nextBtn = document.getElementById('modalNextBtn');
+
+    if (prevBtn) {
+        prevBtn.onclick = () => navigateModal(-1);
+    }
+    if (nextBtn) {
+        nextBtn.onclick = () => navigateModal(1);
+    }
+}
+
+function navigateModal(direction) {
+    if (currentModalIndex === -1 || filteredPlatesData.length === 0) return;
+
+    const newIndex = currentModalIndex + direction;
+    if (newIndex >= 0 && newIndex < filteredPlatesData.length) {
+        openPlateModal(filteredPlatesData[newIndex]);
+    }
+}
+
+function updateModalNavState() {
+    const prevBtn = document.getElementById('modalPrevBtn');
+    const nextBtn = document.getElementById('modalNextBtn');
+
+    if (prevBtn) {
+        prevBtn.disabled = currentModalIndex <= 0;
+        prevBtn.style.opacity = currentModalIndex <= 0 ? '0.4' : '1';
+        prevBtn.style.cursor = currentModalIndex <= 0 ? 'not-allowed' : 'pointer';
+    }
+
+    if (nextBtn) {
+        nextBtn.disabled = currentModalIndex >= filteredPlatesData.length - 1;
+        nextBtn.style.opacity = currentModalIndex >= filteredPlatesData.length - 1 ? '0.4' : '1';
+        nextBtn.style.cursor = currentModalIndex >= filteredPlatesData.length - 1 ? 'not-allowed' : 'pointer';
+    }
 }
 
 function closePlateModal() {
@@ -404,11 +468,17 @@ function closePlateModal() {
     content.classList.add('scale-95', 'opacity-0');
     setTimeout(() => {
         modal.classList.add('hidden');
+        currentModalIndex = -1;
     }, 200);
 }
 
 document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('plateModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+
     if (e.key === 'Escape') closePlateModal();
+    if (e.key === 'ArrowLeft') navigateModal(-1);
+    if (e.key === 'ArrowRight') navigateModal(1);
 });
 
 const modalContainer = document.getElementById('plateModal');
@@ -469,7 +539,7 @@ function filterData() {
     const exactCheckbox = document.getElementById('exactMatchCheckbox');
     const isExactMatch = exactCheckbox ? exactCheckbox.checked : false;
     
-    let filtered = platesData.filter(item => {
+    filteredPlatesData = platesData.filter(item => {
         const matchesState = selectedState === '' || item.state === selectedState;
         if (!matchesState) return false;
 
@@ -485,7 +555,7 @@ function filterData() {
         }
     });
 
-    displayResults(filtered);
+    displayResults(filteredPlatesData);
 }
 
 loadData();
