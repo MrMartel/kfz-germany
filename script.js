@@ -513,14 +513,14 @@ function displayResults(data) {
         card.onclick = () => openPlateModal(item);
 
         card.innerHTML = `
-            <div class="flex border-2 border-slate-700 rounded-xl overflow-hidden bg-white shadow-md shrink-0 w-32 h-16 items-center group-hover:scale-105 transition-transform">
-                <div class="bg-blue-700 text-white w-7 h-full flex flex-col items-center justify-between py-1.5 shadow-inner">
-                    <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
+            <div class="flex border-[2.5px] border-slate-950 rounded-md overflow-hidden bg-white shadow-md shrink-0 w-32 h-14 items-center group-hover:scale-105 transition-transform p-[1px]">
+                <div class="bg-[#003399] text-white w-6 h-full flex flex-col items-center justify-between py-1 shrink-0 rounded-l-[2px]">
+                    <svg class="w-3.5 h-3.5 text-yellow-400 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
                     </svg>
-                    <span class="text-[10px] font-black tracking-widest">D</span>
+                    <span class="text-[9px] font-black tracking-widest leading-none mb-0.5">D</span>
                 </div>
-                <div class="flex-1 flex items-center justify-center font-black tracking-widest text-2xl text-slate-900">
+                <div class="flex-1 text-center font-bold plate-font text-2xl text-slate-900 uppercase">
                     ${item.prefix}
                 </div>
             </div>

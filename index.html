@@ -6,8 +6,19 @@
     <title>Kfz-Kennzeichen Finder</title>
     <link rel="apple-touch-icon" href="Images/apple-touch-icon.png">
     
+    <!-- Polices d'immatriculation -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+
     <!-- Framework Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .plate-font {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.12em;
+        }
+    </style>
 </head>
 <body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative">
 
@@ -39,7 +50,7 @@
                 <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." 
                        class="w-full pl-5 pr-12 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
                 
-                <!-- Bouton Effacer (masqué par défaut) -->
+                <!-- Bouton Effacer -->
                 <button id="clearSearchBtn" class="absolute right-3 hidden text-slate-400 hover:text-white bg-slate-700/60 hover:bg-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all">
                     ✕
                 </button>
@@ -85,21 +96,16 @@
         ↑
     </button>
 
-    <!-- Modale de détail avec navigation -->
+    <!-- Modale de détail avec l'image PNG avec fond blanc d'origine -->
     <div id="plateModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div id="modalContent" class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-lg w-full p-6 md:p-8 relative shadow-2xl transform transition-all scale-95 opacity-0">
             <button onclick="closePlateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center transition-colors z-10">
                 ✕
             </button>
             
-            <div class="flex border-4 border-slate-700 rounded-2xl overflow-hidden bg-white shadow-2xl w-full h-28 items-center mb-6">
-                <div class="bg-blue-700 text-white w-14 h-full flex flex-col items-center justify-between py-3 shadow-inner">
-                    <svg class="w-6 h-6 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
-                    </svg>
-                    <span class="text-xs font-black tracking-widest">D</span>
-                </div>
-                <div id="modalPrefix" class="flex-1 flex items-center justify-center font-black tracking-widest text-5xl md:text-6xl text-slate-900">
+            <!-- Plaque grand format utilisant ton image plaque_allemande_vierge_blanc.png -->
+            <div class="relative w-full aspect-[520/110] bg-contain bg-center bg-no-repeat flex items-center justify-center mb-6 drop-shadow-2xl" style="background-image: url('Images/plaque_allemande_vierge_blanc.png');">
+                <div id="modalPrefix" class="w-full text-center pl-[17%] font-bold plate-font text-5xl md:text-6xl text-slate-900 uppercase select-none">
                     --
                 </div>
             </div>
