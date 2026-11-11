@@ -44,6 +44,7 @@ async function loadData() {
         setupBackToTop();
         setupModalNavigation();
         initServiceWorker();
+        checkDeepLink();
     } catch (error) {
         console.error("Erreur de chargement data.json :", error);
         const grid = document.getElementById('resultsGrid');
@@ -53,6 +54,19 @@ async function loadData() {
                     <p class="font-bold text-sm">Erreur de chargement des données</p>
                     <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez le fichier data.json.</p>
                 </div>`;
+        }
+    }
+}
+
+/* --- DEEP LINKING (OUVERTURE AUTOMATIQUE D'UNE PLAQUE VIA L'URL) --- */
+function checkDeepLink() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const prefixParam = urlParams.get('prefix') || window.location.hash.replace('#', '');
+    
+    if (prefixParam) {
+        const target = platesData.find(p => p.prefix.toLowerCase() === prefixParam.toLowerCase().trim());
+        if (target) {
+            openPlateModal(target);
         }
     }
 }
@@ -580,7 +594,6 @@ function openPlateModal(item) {
         sealImg.src = stateCoatOfArms[landKey] || stateCoatOfArms['bund'];
     }
 
-    // Gestion du bouton Favori dans la modale
     const modalFavBtn = document.getElementById('modalFavBtn');
     if (modalFavBtn) {
         updateModalFavButton(item.prefix);
@@ -595,14 +608,17 @@ function openPlateModal(item) {
         };
     }
 
-    // Gestion du bouton Partager (Web Share API)
+    // Partage natif avec paramètre d'URL (Deep link)
     const shareBtn = document.getElementById('modalShareBtn');
     if (shareBtn) {
         shareBtn.onclick = async () => {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?prefix=${encodeURIComponent(item.prefix)}`;
+            
             const shareData = {
                 title: `Plaque d'immatriculation : ${item.prefix} (${item.city})`,
-                text: `Préfixe d'immatriculation allemande : ${item.prefix}\nVille : ${item.city}\nLand : ${item.state}\nArrondissement : ${item.region}`,
-                url: window.location.href
+                text: `Découvre le préfixe d'immatriculation allemande "${item.prefix}" pour la ville de ${item.city} (${item.state}) :`,
+                url: shareUrl
             };
 
             if (navigator.share) {
@@ -613,10 +629,10 @@ function openPlateModal(item) {
                 }
             } else {
                 try {
-                    await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}`);
-                    alert('Fiche copiée dans le presse-papier !');
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert('Lien direct vers la plaque copié dans le presse-papier !');
                 } catch (err) {
-                    alert('Impossible de copier automatiquement la fiche.');
+                    alert('Impossible de copier le lien.');
                 }
             }
         };
