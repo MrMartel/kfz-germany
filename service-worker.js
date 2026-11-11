@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kfz-finder-v5.0';
+const CACHE_NAME = 'kfz-finder-v5.1';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -38,7 +38,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -50,6 +49,13 @@ self.addEventListener('activate', (event) => {
     })
   );
   self.clients.claim();
+});
+
+// Écoute de la commande de mise à jour forcée envoyée par l'application
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (event) => {

@@ -40,6 +40,7 @@ async function loadData() {
         setupMapClearControl();
         setupBackToTop();
         setupModalNavigation();
+        initServiceWorker();
     } catch (error) {
         console.error("Erreur de chargement data.json :", error);
         const grid = document.getElementById('resultsGrid');
@@ -47,11 +48,65 @@ async function loadData() {
             grid.innerHTML = `
                 <div class="col-span-full text-center py-8 bg-red-900/20 border border-red-500/30 rounded-2xl text-red-300">
                     <p class="font-bold text-sm">Erreur de chargement des données</p>
-                    <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez la casse du fichier sur GitHub Pages.</p>
+                    <p class="text-xs text-red-400/80 mt-1">${error.message}. Vérifiez le fichier data.json.</p>
                 </div>`;
         }
     }
 }
+
+/* --- GESTION ROBUSTE DU SERVICE WORKER ET DES MISES À JOUR PWA --- */
+function initServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+
+    let newWorker = null;
+    let refreshing = false;
+
+    // Détection du rechargement une fois le nouveau SW activé
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+    });
+
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => {
+                // Détection de mise à jour lors d'une visite ultérieure
+                reg.addEventListener('updatefound', () => {
+                    newWorker = reg.installing;
+                    if (!newWorker) return;
+
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showUpdateToast(newWorker);
+                        }
+                    });
+                });
+
+                // Si un nouveau SW attend déjà d'être activé au chargement
+                if (reg.waiting) {
+                    newWorker = reg.waiting;
+                    showUpdateToast(newWorker);
+                }
+            })
+            .catch(err => console.error('Erreur Service Worker :', err));
+    });
+}
+
+function showUpdateToast(worker) {
+    const toast = document.getElementById('pwaUpdateToast');
+    const btn = document.getElementById('pwaReloadBtn');
+    if (!toast || !btn) return;
+
+    toast.classList.remove('hidden');
+
+    btn.onclick = () => {
+        if (worker) {
+            worker.postMessage({ action: 'SKIP_WAITING' });
+        }
+    };
+}
+/* ----------------------------------------------------------------- */
 
 function setupMapClearControl() {
     const clearMapBtn = document.getElementById('clearMapSelectionBtn');
@@ -122,7 +177,7 @@ async function loadSVGMap() {
                 break;
             }
         } catch (e) {
-            // Continuation
+            // Continuation en cas d'erreur sur un chemin alternatif
         }
     }
 
