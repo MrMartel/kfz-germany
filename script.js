@@ -2,6 +2,8 @@ let platesData = [];
 let filteredPlatesData = [];
 let currentModalIndex = -1;
 let selectedState = '';
+let showOnlyFavorites = false;
+let favorites = JSON.parse(localStorage.getItem('kfz_favorites') || '[]');
 
 const stateCoatOfArms = {
     'bw': 'Images/Armoiries_Landers/amr_bw.svg',
@@ -24,6 +26,7 @@ const stateCoatOfArms = {
 };
 
 async function loadData() {
+    initTheme();
     loadSVGMap();
 
     try {
@@ -54,14 +57,75 @@ async function loadData() {
     }
 }
 
-/* --- GESTION ROBUSTE DU SERVICE WORKER ET DES MISES À JOUR PWA --- */
+/* --- GESTION DU THÈME CLAIR / SOMBRE --- */
+function initTheme() {
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const icon = document.getElementById('themeToggleIcon');
+    const savedTheme = localStorage.getItem('kfz_theme') || 'dark';
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        if (icon) icon.textContent = '☀️';
+    } else {
+        document.documentElement.classList.add('dark');
+        if (icon) icon.textContent = '🌙';
+    }
+
+    if (themeBtn) {
+        themeBtn.onclick = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('kfz_theme', isDark ? 'dark' : 'light');
+            if (icon) icon.textContent = isDark ? '🌙' : '☀️';
+        };
+    }
+}
+
+/* --- GESTION DES FAVORIS (LOCALSTORAGE) --- */
+function toggleFavorite(prefix, event) {
+    if (event) event.stopPropagation();
+
+    const index = favorites.indexOf(prefix);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(prefix);
+    }
+    localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
+
+    const favBtn = document.getElementById('btn-favorites');
+    if (favBtn) {
+        favBtn.textContent = `★ Mes plaques favorites (${favorites.length})`;
+    }
+
+    if (currentModalIndex !== -1 && filteredPlatesData[currentModalIndex]) {
+        updateModalFavButton(filteredPlatesData[currentModalIndex].prefix);
+    }
+
+    filterData();
+}
+
+function updateModalFavButton(prefix) {
+    const favBtn = document.getElementById('modalFavBtn');
+    const favIcon = document.getElementById('modalFavIcon');
+    if (!favBtn || !favIcon) return;
+
+    const isFav = favorites.includes(prefix);
+    favIcon.textContent = isFav ? '★' : '☆';
+    
+    if (isFav) {
+        favBtn.className = 'px-3 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-amber-500/30';
+    } else {
+        favBtn.className = 'px-3 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5';
+    }
+}
+
+/* --- GESTION DU SERVICE WORKER --- */
 function initServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
 
     let newWorker = null;
     let refreshing = false;
 
-    // Détection du rechargement une fois le nouveau SW activé
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (refreshing) return;
         refreshing = true;
@@ -71,7 +135,6 @@ function initServiceWorker() {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
             .then(reg => {
-                // Détection de mise à jour lors d'une visite ultérieure
                 reg.addEventListener('updatefound', () => {
                     newWorker = reg.installing;
                     if (!newWorker) return;
@@ -83,7 +146,6 @@ function initServiceWorker() {
                     });
                 });
 
-                // Si un nouveau SW attend déjà d'être activé au chargement
                 if (reg.waiting) {
                     newWorker = reg.waiting;
                     showUpdateToast(newWorker);
@@ -106,7 +168,6 @@ function showUpdateToast(worker) {
         }
     };
 }
-/* ----------------------------------------------------------------- */
 
 function setupMapClearControl() {
     const clearMapBtn = document.getElementById('clearMapSelectionBtn');
@@ -176,9 +237,7 @@ async function loadSVGMap() {
                 svgText = await response.text();
                 break;
             }
-        } catch (e) {
-            // Continuation en cas d'erreur sur un chemin alternatif
-        }
+        } catch (e) {}
     }
 
     if (svgText) {
@@ -191,7 +250,7 @@ async function loadSVGMap() {
         }
         highlightMapState(selectedState);
     } else {
-        container.innerHTML = `<span class="text-xs text-amber-400 text-center">Carte SVG introuvable</span>`;
+        container.innerHTML = `<span class="text-xs text-amber-500 text-center">Carte SVG introuvable</span>`;
     }
 }
 
@@ -303,24 +362,71 @@ function initStatesFilter() {
     allBtn.id = 'btn-all';
     allBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
     allBtn.textContent = '🇩🇪 Tous les Länder';
-    allBtn.onclick = () => selectState('');
+    allBtn.onclick = () => {
+        showOnlyFavorites = false;
+        selectState('');
+    };
     container.appendChild(allBtn);
+
+    const favBtn = document.createElement('button');
+    favBtn.id = 'btn-favorites';
+    favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white';
+    favBtn.textContent = `★ Mes plaques favorites (${favorites.length})`;
+    favBtn.onclick = () => {
+        showOnlyFavorites = true;
+        selectedState = '';
+        updateFilterButtons();
+        filterData();
+    };
+    container.appendChild(favBtn);
 
     states.forEach(state => {
         const btn = document.createElement('button');
         btn.dataset.state = state;
-        btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
+        btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-200 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-300 dark:border-slate-600/60';
         btn.textContent = state;
-        btn.onclick = () => selectState(state);
+        btn.onclick = () => {
+            showOnlyFavorites = false;
+            selectState(state);
+        };
         container.appendChild(btn);
+    });
+}
+
+function updateFilterButtons() {
+    const buttons = document.querySelectorAll('.state-btn');
+    const allBtn = document.getElementById('btn-all');
+    const favBtn = document.getElementById('btn-favorites');
+
+    if (favBtn) {
+        if (showOnlyFavorites) {
+            favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-amber-500 text-white shadow-md shadow-amber-500/30';
+        } else {
+            favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white';
+        }
+    }
+
+    if (allBtn) {
+        if (!showOnlyFavorites && selectedState === '') {
+            allBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+        } else {
+            allBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-200 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-300 dark:border-slate-600/60';
+        }
+    }
+
+    buttons.forEach(btn => {
+        if (!showOnlyFavorites && btn.dataset.state === selectedState) {
+            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
+        } else {
+            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-200 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-300 dark:border-slate-600/60';
+        }
     });
 }
 
 function selectState(state) {
     selectedState = state;
+    showOnlyFavorites = false;
     
-    const buttons = document.querySelectorAll('.state-btn');
-    const allBtn = document.getElementById('btn-all');
     const label = document.getElementById('mapHoverLabel');
     const clearMapBtn = document.getElementById('clearMapSelectionBtn');
 
@@ -334,19 +440,7 @@ function selectState(state) {
         }
     }
 
-    buttons.forEach(btn => {
-        if (btn.dataset.state === state) {
-            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30';
-        } else {
-            btn.className = 'state-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
-        }
-    });
-
-    if (allBtn) {
-        allBtn.className = state === '' 
-            ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30'
-            : 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-700/80 text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-600/60';
-    }
+    updateFilterButtons();
 
     const mainCoatImg = document.getElementById('stateCoatOfArmsDisplay');
     const mainCoatTitle = document.getElementById('stateCoatOfArmsTitle');
@@ -454,6 +548,7 @@ function highlightMapState(state) {
     });
 }
 
+/* --- MODALE ET ACTIONS --- */
 function openPlateModal(item) {
     const modal = document.getElementById('plateModal');
     const content = document.getElementById('modalContent');
@@ -469,7 +564,6 @@ function openPlateModal(item) {
 
     const landKey = (item.landId || '').toLowerCase().trim();
 
-    // 1. Armoiries sous le titre du Land dans la modale
     const coatImg = document.getElementById('modalCoatOfArms');
     if (coatImg) {
         if (stateCoatOfArms[landKey]) {
@@ -481,10 +575,16 @@ function openPlateModal(item) {
         }
     }
 
-    // 2. Sceau du Land dans le macaron inférieur de la plaque
     const sealImg = document.getElementById('modalLandSeal');
     if (sealImg) {
         sealImg.src = stateCoatOfArms[landKey] || stateCoatOfArms['bund'];
+    }
+
+    // Gestion du bouton Favori dans la modale
+    const modalFavBtn = document.getElementById('modalFavBtn');
+    if (modalFavBtn) {
+        updateModalFavButton(item.prefix);
+        modalFavBtn.onclick = (e) => toggleFavorite(item.prefix, e);
     }
 
     const filterBtn = document.getElementById('modalFilterBtn');
@@ -492,6 +592,33 @@ function openPlateModal(item) {
         filterBtn.onclick = () => {
             selectState(item.state);
             closePlateModal();
+        };
+    }
+
+    // Gestion du bouton Partager (Web Share API)
+    const shareBtn = document.getElementById('modalShareBtn');
+    if (shareBtn) {
+        shareBtn.onclick = async () => {
+            const shareData = {
+                title: `Plaque d'immatriculation : ${item.prefix} (${item.city})`,
+                text: `Préfixe d'immatriculation allemande : ${item.prefix}\nVille : ${item.city}\nLand : ${item.state}\nArrondissement : ${item.region}`,
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.log('Partage annulé :', err);
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}`);
+                    alert('Fiche copiée dans le presse-papier !');
+                } catch (err) {
+                    alert('Impossible de copier automatiquement la fiche.');
+                }
+            }
         };
     }
 
@@ -508,12 +635,8 @@ function setupModalNavigation() {
     const prevBtn = document.getElementById('modalPrevBtn');
     const nextBtn = document.getElementById('modalNextBtn');
 
-    if (prevBtn) {
-        prevBtn.onclick = () => navigateModal(-1);
-    }
-    if (nextBtn) {
-        nextBtn.onclick = () => navigateModal(1);
-    }
+    if (prevBtn) prevBtn.onclick = () => navigateModal(-1);
+    if (nextBtn) nextBtn.onclick = () => navigateModal(1);
 }
 
 function navigateModal(direction) {
@@ -582,36 +705,44 @@ function displayResults(data) {
 
     if (data.length === 0) {
         grid.innerHTML = `
-            <div class="col-span-full text-center py-12 bg-slate-800/40 rounded-2xl border border-slate-700/50">
-                <p class="text-slate-300 font-medium">Aucun résultat trouvé.</p>
+            <div class="col-span-full text-center py-12 bg-slate-200/50 dark:bg-slate-800/40 rounded-2xl border border-slate-300 dark:border-slate-700/50">
+                <p class="text-slate-700 dark:text-slate-300 font-medium">Aucun résultat trouvé.</p>
                 <p class="text-xs text-slate-500 mt-1">Si la case "Préfixe exact" est cochée, décochez-la pour effectuer une recherche plus large.</p>
             </div>`;
         return;
     }
 
     data.forEach(item => {
+        const isFav = favorites.includes(item.prefix);
         const card = document.createElement('div');
-        card.className = 'bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/80 p-5 flex items-center space-x-5 hover:border-blue-500/50 transition-all group cursor-pointer';
+        card.className = 'bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700/80 p-5 flex items-center justify-between space-x-4 hover:border-blue-500/50 transition-all group cursor-pointer relative';
         
         card.onclick = () => openPlateModal(item);
 
         card.innerHTML = `
-            <div class="flex border-[2.5px] border-slate-950 rounded-md overflow-hidden bg-white shadow-md shrink-0 w-32 h-14 items-center group-hover:scale-105 transition-transform p-[1px]">
-                <div class="bg-[#003399] text-white w-6 h-full flex flex-col items-center justify-between py-1 shrink-0 rounded-l-[2px]">
-                    <svg class="w-3.5 h-3.5 text-yellow-400 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
-                    </svg>
-                    <span class="text-[9px] font-black tracking-widest leading-none mb-0.5">D</span>
+            <div class="flex items-center space-x-4 overflow-hidden">
+                <div class="flex border-[2.5px] border-slate-950 rounded-md overflow-hidden bg-white shadow-md shrink-0 w-32 h-14 items-center group-hover:scale-105 transition-transform p-[1px]">
+                    <div class="bg-[#003399] text-white w-6 h-full flex flex-col items-center justify-between py-1 shrink-0 rounded-l-[2px]">
+                        <svg class="w-3.5 h-3.5 text-yellow-400 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
+                        </svg>
+                        <span class="text-[9px] font-black tracking-widest leading-none mb-0.5">D</span>
+                    </div>
+                    <div class="flex-1 text-center font-bold plate-font text-2xl text-slate-900 uppercase">
+                        ${item.prefix}
+                    </div>
                 </div>
-                <div class="flex-1 text-center font-bold plate-font text-2xl text-slate-900 uppercase">
-                    ${item.prefix}
+                <div class="overflow-hidden">
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">${item.city}</h3>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-0.5">${item.state}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-1">${item.region}</p>
                 </div>
             </div>
-            <div class="overflow-hidden">
-                <h3 class="font-bold text-lg text-white group-hover:text-blue-400 transition-colors truncate">${item.city}</h3>
-                <p class="text-xs text-blue-400 font-semibold mt-0.5">${item.state}</p>
-                <p class="text-xs text-slate-400 truncate mt-1">${item.region}</p>
-            </div>
+
+            <!-- Étoile de favori -->
+            <button onclick="toggleFavorite('${item.prefix}', event)" title="Ajouter aux favoris" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-xl shrink-0">
+                ${isFav ? '★' : '☆'}
+            </button>
         `;
         grid.appendChild(card);
     });
@@ -623,6 +754,10 @@ function filterData() {
     const isExactMatch = exactCheckbox ? exactCheckbox.checked : false;
     
     filteredPlatesData = platesData.filter(item => {
+        if (showOnlyFavorites && !favorites.includes(item.prefix)) {
+            return false;
+        }
+
         const matchesState = selectedState === '' || item.state === selectedState;
         if (!matchesState) return false;
 

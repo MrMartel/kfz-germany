@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,11 @@
 
     <!-- Framework Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <style>
         .plate-font {
             font-family: 'Oswald', sans-serif;
@@ -22,26 +27,31 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b1120">
 </head>
-<body class="bg-[#0b1120] text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative">
+<body class="bg-slate-100 dark:bg-[#0b1120] text-slate-800 dark:text-slate-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative transition-colors duration-300">
 
     <!-- Infobulle flottante pour la carte SVG -->
-    <div id="mapTooltip" class="fixed pointer-events-none z-50 hidden bg-slate-900/95 border border-slate-700 text-white text-xs px-3 py-2 rounded-xl shadow-2xl backdrop-blur-md transition-opacity duration-150 transform -translate-x-1/2 -translate-y-full mb-2">
-        <p id="tooltipStateName" class="font-bold text-blue-400"></p>
-        <p id="tooltipPlateCount" class="text-[11px] text-slate-300"></p>
+    <div id="mapTooltip" class="fixed pointer-events-none z-50 hidden bg-white/95 dark:bg-slate-900/95 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs px-3 py-2 rounded-xl shadow-2xl backdrop-blur-md transition-opacity duration-150 transform -translate-x-1/2 -translate-y-full mb-2">
+        <p id="tooltipStateName" class="font-bold text-blue-600 dark:text-blue-400"></p>
+        <p id="tooltipPlateCount" class="text-[11px] text-slate-600 dark:text-slate-300"></p>
     </div>
 
-    <!-- En-tête avec image d'accueil et badge de version -->
-    <header class="text-center mb-8 max-w-xl w-full flex flex-col items-center">
+    <!-- En-tête avec image d'accueil, badge et Theme Switcher -->
+    <header class="text-center mb-8 max-w-xl w-full flex flex-col items-center relative">
+        <!-- Bouton Theme Switcher (Clair / Sombre) -->
+        <button id="themeToggleBtn" title="Changer de thème" class="absolute top-0 right-0 p-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-amber-400 hover:scale-105 transition-all shadow-md">
+            <span id="themeToggleIcon" class="text-xl">🌙</span>
+        </button>
+
         <img src="Images/image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="max-w-[400px] w-[90%] h-auto block mx-auto mb-4 rounded-lg shadow-2xl">
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
         
         <!-- Pastille de version -->
         <div class="mt-2 mb-1 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span class="text-xs font-mono font-semibold text-emerald-300 tracking-wider">v6.0.0</span>
+            <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-300 tracking-wider">v7.0.0</span>
         </div>
 
-        <p class="text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
+        <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base mt-1">Encyclopédie interactive des préfixes d'immatriculation en Allemagne.</p>
     </header>
 
     <main class="w-full max-w-5xl flex flex-col gap-6">
@@ -50,33 +60,30 @@
         <section class="flex flex-col items-center gap-3">
             <div class="w-full max-w-md relative flex items-center">
                 <input type="text" id="searchInput" placeholder="Rechercher par préfixe ou par ville..." 
-                       class="w-full pl-5 pr-12 py-3 bg-slate-800/90 border border-slate-700 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
+                       class="w-full pl-5 pr-12 py-3 bg-white dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-full text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
                 
                 <!-- Bouton Effacer la recherche -->
-                <button id="clearSearchBtn" class="absolute right-3 hidden text-slate-400 hover:text-white bg-slate-700/60 hover:bg-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all">
+                <button id="clearSearchBtn" class="absolute right-3 hidden text-slate-400 hover:text-slate-700 dark:hover:text-white bg-slate-200 dark:bg-slate-700/60 hover:bg-slate-300 dark:hover:bg-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all">
                     ✕
                 </button>
             </div>
             
-            <label class="flex items-center gap-2 text-slate-400 text-xs md:text-sm cursor-pointer hover:text-slate-200 transition-colors" for="exactMatchCheckbox">
+            <label class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-xs md:text-sm cursor-pointer hover:text-slate-900 dark:hover:text-slate-200 transition-colors" for="exactMatchCheckbox">
                 <input type="checkbox" id="exactMatchCheckbox" checked class="accent-blue-600 w-4 h-4 rounded cursor-pointer">
                 Préfixe exact uniquement
             </label>
         </section>
 
         <!-- Tableau de bord : Carte, Filtres & Armoirie dynamique -->
-        <section class="bg-slate-800/50 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row gap-6 items-stretch shadow-xl">
+        <section class="bg-white/80 dark:bg-slate-800/50 backdrop-blur-md border border-slate-300 dark:border-slate-700/60 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row gap-6 items-stretch shadow-xl">
             
-            <!-- Conteneur Carte SVG avec bouton de désélection -->
-            <div class="relative flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
-                
-                <!-- Croix de désélection (masquée par défaut) -->
-                <button id="clearMapSelectionBtn" title="Réinitialiser le filtre de région" class="absolute top-3 right-3 hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-md z-10">
+            <!-- Conteneur Carte SVG -->
+            <div class="relative flex-shrink-0 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col items-center justify-between min-w-[260px]">
+                <button id="clearMapSelectionBtn" title="Réinitialiser le filtre de région" class="absolute top-3 right-3 hidden text-slate-400 hover:text-white bg-slate-200 dark:bg-slate-800 hover:bg-slate-700 border border-slate-300 dark:border-slate-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-md z-10">
                     ✕
                 </button>
-
                 <div id="svgContainer" class="w-full flex justify-center items-center"></div>
-                <span id="mapHoverLabel" class="text-xs font-medium text-slate-400 mt-3">Toutes les régions</span>
+                <span id="mapHoverLabel" class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-3">Toutes les régions</span>
             </div>
 
             <!-- Colonne Droite : Filtres + Grand affichage de l'armoirie -->
@@ -85,16 +92,16 @@
                 <div class="flex flex-wrap content-start gap-2" id="statesFilterContainer"></div>
 
                 <!-- Zone d'affichage de l'armoirie sélectionnée -->
-                <div class="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] transition-all">
+                <div class="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/40 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] transition-all">
                     <img id="stateCoatOfArmsDisplay" class="h-24 w-auto object-contain drop-shadow-xl transition-all duration-300" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Coat_of_arms_of_Germany.svg" alt="Armoiries du Land sélectionné">
-                    <span id="stateCoatOfArmsTitle" class="text-xs font-bold text-slate-300 mt-3 tracking-wide">République fédérale d'Allemagne</span>
+                    <span id="stateCoatOfArmsTitle" class="text-xs font-bold text-slate-700 dark:text-slate-300 mt-3 tracking-wide">République fédérale d'Allemagne</span>
                 </div>
             </div>
         </section>
 
         <!-- Grille des résultats -->
         <section>
-            <div id="resultCount" class="text-xs font-semibold text-slate-400 mb-3 px-1"></div>
+            <div id="resultCount" class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 px-1"></div>
             <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
     </main>
@@ -104,7 +111,7 @@
         ↑
     </button>
 
-    <!-- Banner Toast PWA : Notification de mise à jour PWA disponible -->
+    <!-- Banner Toast PWA -->
     <div id="pwaUpdateToast" class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md bg-slate-900/95 border border-blue-500/50 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-md hidden flex items-center justify-between gap-4 z-50">
         <div class="flex items-center gap-3">
             <span class="text-xl">🚀</span>
@@ -120,20 +127,18 @@
 
     <!-- Modale de détail -->
     <div id="plateModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div id="modalContent" class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-lg w-full p-6 md:p-8 relative shadow-2xl transform transition-all scale-95 opacity-0">
-            <button onclick="closePlateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center transition-colors z-10">
+        <div id="modalContent" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-3xl max-w-lg w-full p-6 md:p-8 relative shadow-2xl transform transition-all scale-95 opacity-0">
+            <button onclick="closePlateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center transition-colors z-10">
                 ✕
             </button>
             
             <!-- Plaque grand format avec préfixe centré horizontalement -->
             <div class="relative w-full aspect-[520/110] bg-contain bg-center bg-no-repeat flex items-center mb-6 drop-shadow-2xl select-none" style="background-image: url('Images/plaque_allemande_vierge_blanc.png');">
                 
-                <!-- Zone Préfixe (Gauche) : Centrage horizontal parfait -->
                 <div class="w-[38%] h-full flex items-center justify-center pl-[13%] pr-1">
                     <span id="modalPrefix" class="plate-font text-slate-900 text-4xl sm:text-5xl md:text-6xl font-bold uppercase tracking-tight text-center w-full">--</span>
                 </div>
 
-                <!-- Zone Centrale : CT Orange + Sceau du Land -->
                 <div class="w-[12%] h-full flex flex-col items-center justify-center space-y-1">
                     <img src="Images/macaron_CT.png" alt="CT Orange" class="w-6 h-6 sm:w-7 sm:h-7 object-contain drop-shadow-sm">
                     <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-slate-100 border border-slate-400 shadow-sm flex items-center justify-center p-[1px]">
@@ -141,7 +146,6 @@
                     </div>
                 </div>
 
-                <!-- Zone Numéro Fictif (Droite) -->
                 <div class="w-[50%] h-full flex items-center justify-start pl-2">
                     <span class="plate-font text-slate-900 text-4xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">KL 8136</span>
                 </div>
@@ -150,40 +154,48 @@
             <div class="space-y-4">
                 <div>
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Ville / Zone administrative</span>
-                    <h2 id="modalCity" class="text-2xl font-extrabold text-white mt-0.5"></h2>
+                    <h2 id="modalCity" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5"></h2>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Land (État)</span>
                         <div class="flex items-center gap-2 mt-1">
                             <img id="modalCoatOfArms" class="h-8 w-auto object-contain hidden drop-shadow" alt="Armoiries du Land">
-                            <p id="modalState" class="text-base font-bold text-blue-400"></p>
+                            <p id="modalState" class="text-base font-bold text-blue-600 dark:text-blue-400"></p>
                         </div>
                     </div>
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Code Land</span>
-                        <p id="modalLandId" class="text-base font-semibold text-slate-300 font-mono mt-1"></p>
+                        <p id="modalLandId" class="text-base font-semibold text-slate-700 dark:text-slate-300 font-mono mt-1"></p>
                     </div>
                 </div>
                 <div>
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Arrondissement / Description</span>
-                    <p id="modalRegion" class="text-sm text-slate-300 leading-relaxed mt-0.5"></p>
+                    <p id="modalRegion" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mt-0.5"></p>
                 </div>
             </div>
             
-            <!-- Navigation Précédent / Suivant et Filtre -->
-            <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+            <!-- Navigation Précédent / Suivant, Favori, Partage et Filtre -->
+            <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
-                    <button id="modalPrevBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-700">
+                    <button id="modalPrevBtn" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-300 dark:border-slate-700">
                         ← Précédent
                     </button>
-                    <button id="modalNextBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-700">
+                    <button id="modalNextBtn" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-300 dark:border-slate-700">
                         Suivant →
                     </button>
                 </div>
-                <button id="modalFilterBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-600/30">
-                    Filtrer par ce Land
-                </button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button id="modalFavBtn" class="px-3 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5">
+                        <span id="modalFavIcon">☆</span> Favori
+                    </button>
+                    <button id="modalShareBtn" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5">
+                        <span>🔗</span> Partager
+                    </button>
+                    <button id="modalFilterBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-600/30">
+                        Filtrer par ce Land
+                    </button>
+                </div>
             </div>
         </div>
     </div>
