@@ -35,7 +35,7 @@
         <p id="tooltipPlateCount" class="text-[11px] text-slate-600 dark:text-slate-300"></p>
     </div>
 
-    <!-- Notification temporaire (Toast d'action / Synchronisation) -->
+    <!-- Notification temporaire (Toast d'action / Synchronisation / Version) -->
     <div id="actionToast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-900/95 border border-emerald-500/50 text-white px-4 py-2.5 rounded-full shadow-2xl backdrop-blur-md hidden flex items-center gap-2 z-50 text-xs font-semibold transition-all">
         <span id="actionToastIcon">✅</span>
         <span id="actionToastText"></span>
@@ -46,26 +46,32 @@
         <img src="Images/image_accueil.png" alt="Plaque d'immatriculation allemande RA KL 8136" class="max-w-[400px] w-[90%] h-auto block mx-auto mb-4 rounded-lg shadow-2xl">
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Kfz-Kennzeichen Finder</h1>
         
-        <!-- Barre d'actions unifiée : Version + Favoris + Synchro + Vider + Mode Jour/Nuit -->
+        <!-- Barre d'actions unifiée : Version + Favoris + Importer + Synchro + Vider + Mode Jour/Nuit -->
         <div class="mt-3 mb-2 flex flex-wrap items-center justify-center gap-2">
-            <!-- Pastille de version -->
-            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
+            <!-- Pastille de version cliquable (affiche la date de mise à jour) -->
+            <button id="versionBadgeBtn" data-release-date="12 novembre 2026" title="Afficher la date de mise à jour" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-full transition-all active:scale-95 cursor-pointer">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-300 tracking-wider">v7.2.0</span>
-            </div>
+                <span id="versionBadgeText" class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-300 tracking-wider">v7.3.1</span>
+            </button>
 
             <!-- Bouton Favoris -->
             <button id="headerFavBtn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white shadow-sm">
                 <span id="headerFavText">★ Favoris (0)</span>
             </button>
 
-            <!-- Bouton Synchroniser les favoris (masqué par défaut, visible si vue Favoris active et >= 1 favori) -->
+            <!-- Bouton Importer des favoris (visible dès que la vue Favoris est ouverte) -->
+            <button id="importFavBtn" title="Importer un lien ou une liste de favoris" class="hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white shadow-sm">
+                <span>📥</span>
+                <span>Importer</span>
+            </button>
+
+            <!-- Bouton Synchroniser les favoris (visible si vue Favoris active et >= 1 favori) -->
             <button id="syncFavBtn" title="Générer un lien de synchronisation des favoris" class="hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white shadow-sm">
                 <span>🔄</span>
                 <span>Synchroniser</span>
             </button>
 
-            <!-- Bouton Vider les favoris (masqué par défaut, visible si vue Favoris active et >= 1 favori) -->
+            <!-- Bouton Vider les favoris (visible si vue Favoris active et >= 1 favori) -->
             <button id="clearFavBtn" title="Supprimer tous les favoris" class="hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-600 hover:text-white shadow-sm">
                 <span>🗑️</span>
                 <span>Vider</span>
@@ -150,6 +156,42 @@
         <button id="pwaReloadBtn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shrink-0">
             Mettre à jour
         </button>
+    </div>
+
+    <!-- Modale d'importation des favoris (spéciale PWA iOS & Desktop) -->
+    <div id="importModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="importModalContent" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-3xl max-w-md w-full p-6 relative shadow-2xl transform transition-all scale-95 opacity-0">
+            <button id="closeImportModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                ✕
+            </button>
+
+            <div class="flex items-center gap-2.5 mb-2">
+                <span class="text-xl">📥</span>
+                <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Importer des favoris</h2>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+                Collez le lien de synchronisation reçu depuis votre autre appareil, ou saisissez directement les préfixes séparés par des virgules (ex : <span class="font-mono text-blue-500">AC, K, RA</span>).
+            </p>
+
+            <div class="space-y-3">
+                <button id="pasteClipboardBtn" type="button" class="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                    <span>📋</span>
+                    <span>Coller depuis le presse-papier</span>
+                </button>
+
+                <input type="text" id="importInput" placeholder="https://.../?favs=AC,K ou AC, K" 
+                       class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button id="cancelImportBtn" type="button" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition-all">
+                        Annuler
+                    </button>
+                    <button id="confirmImportBtn" type="button" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-600/30">
+                        Valider l'import
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modale de détail -->

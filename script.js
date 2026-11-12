@@ -27,7 +27,9 @@ const stateCoatOfArms = {
 
 async function loadData() {
     initTheme();
+    initVersionBadge();
     initHeaderFavorites();
+    initImportFavorites();
     initSyncFavorites();
     initClearFavorites();
     loadSVGMap();
@@ -77,43 +79,158 @@ function showActionToast(message, icon = '✅') {
     }, 3500);
 }
 
+/* --- PARSING & FUSION DES FAVORIS (URL OU LISTE DE PRÉFIXES) --- */
+function parseAndImportFavorites(rawInput) {
+    if (!rawInput || !rawInput.trim()) {
+        showActionToast('Veuillez saisir un lien ou une liste de préfixes.', '⚠️');
+        return false;
+    }
+
+    let rawList = rawInput.trim();
+
+    // Si l'utilisateur colle une URL complète contenant ?favs=...
+    if (rawList.includes('favs=')) {
+        try {
+            const urlObj = new URL(rawList.startsWith('http') ? rawList : `https://dummy.local/${rawList.replace(/^\?/, '')}`);
+            const extracted = urlObj.searchParams.get('favs');
+            if (extracted) {
+                rawList = extracted;
+            }
+        } catch (e) {
+            const match = rawList.match(/[?&]favs=([^&]+)/i);
+            if (match && match[1]) {
+                rawList = decodeURIComponent(match[1]);
+            }
+        }
+    }
+
+    // Découpage par virgules, points-virgules ou espaces
+    const tokens = rawList.split(/[,;\s]+/)
+        .map(p => p.trim().toUpperCase())
+        .filter(p => p.length > 0);
+
+    const validNormalized = [];
+    tokens.forEach(token => {
+        const match = platesData.find(item => item.prefix.toUpperCase() === token);
+        if (match && !validNormalized.includes(match.prefix)) {
+            validNormalized.push(match.prefix);
+        }
+    });
+
+    if (validNormalized.length === 0) {
+        showActionToast('Aucun préfixe valide détecté dans la saisie.', '❌');
+        return false;
+    }
+
+    const previousCount = favorites.length;
+    favorites = [...new Set([...favorites, ...validNormalized])];
+    localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
+    updateFavoritesCounter();
+
+    const addedCount = favorites.length - previousCount;
+    if (addedCount > 0) {
+        showActionToast(`${addedCount} nouveau(x) favori(s) importé(s) !`, '★');
+    } else {
+        showActionToast('Vos favoris sont déjà à jour.', '🔄');
+    }
+
+    showOnlyFavorites = true;
+    selectedState = '';
+    const label = document.getElementById('mapHoverLabel');
+    if (label) label.textContent = 'Mes plaques favorites';
+    updateFilterButtons();
+    filterData();
+
+    return true;
+}
+
+/* --- MODALE D'IMPORTATION DES FAVORIS (PWA iOS & DESKTOP) --- */
+function initImportFavorites() {
+    const importBtn = document.getElementById('importFavBtn');
+    const modal = document.getElementById('importModal');
+    const content = document.getElementById('importModalContent');
+    const closeBtn = document.getElementById('closeImportModalBtn');
+    const cancelBtn = document.getElementById('cancelImportBtn');
+    const confirmBtn = document.getElementById('confirmImportBtn');
+    const pasteBtn = document.getElementById('pasteClipboardBtn');
+    const input = document.getElementById('importInput');
+
+    if (!importBtn || !modal || !content) return;
+
+    const openImportModal = () => {
+        if (input) input.value = '';
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+            if (input) input.focus();
+        }, 10);
+    };
+
+    const closeImportModal = () => {
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    };
+
+    importBtn.onclick = openImportModal;
+    if (closeBtn) closeBtn.onclick = closeImportModal;
+    if (cancelBtn) cancelBtn.onclick = closeImportModal;
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeImportModal();
+    });
+
+    if (pasteBtn && input) {
+        pasteBtn.onclick = async () => {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                try {
+                    const clipText = await navigator.clipboard.readText();
+                    if (clipText) {
+                        input.value = clipText.trim();
+                        showActionToast('Texte collé depuis le presse-papier.', '📋');
+                    } else {
+                        showActionToast('Le presse-papier est vide.', '⚠️');
+                    }
+                } catch (err) {
+                    input.focus();
+                    showActionToast('Appuyez dans le champ ci-dessous puis choisissez Coller.', 'ℹ️');
+                }
+            } else {
+                input.focus();
+                showActionToast('Appuyez dans le champ ci-dessous puis choisissez Coller.', 'ℹ️');
+            }
+        };
+    }
+
+    if (confirmBtn && input) {
+        confirmBtn.onclick = () => {
+            if (parseAndImportFavorites(input.value)) {
+                closeImportModal();
+            }
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (parseAndImportFavorites(input.value)) {
+                    closeImportModal();
+                }
+            }
+        });
+    }
+}
+
 /* --- DEEP LINKING & IMPORTATION DES FAVORIS VIA URL --- */
 function checkDeepLink() {
     const urlParams = new URLSearchParams(window.location.search);
     
     const favsParam = urlParams.get('favs');
     if (favsParam) {
-        const incomingPrefixes = favsParam.split(',')
-            .map(p => p.trim().toUpperCase())
-            .filter(p => platesData.some(item => item.prefix.toUpperCase() === p));
-
-        if (incomingPrefixes.length > 0) {
-            const validNormalized = incomingPrefixes.map(p => {
-                const match = platesData.find(item => item.prefix.toUpperCase() === p);
-                return match ? match.prefix : p;
-            });
-
-            const previousCount = favorites.length;
-            favorites = [...new Set([...favorites, ...validNormalized])];
-            localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
-            updateFavoritesCounter();
-
-            const addedCount = favorites.length - previousCount;
-            if (addedCount > 0) {
-                showActionToast(`${addedCount} nouveau(x) favori(s) importé(s) !`, '★');
-            } else {
-                showActionToast('Vos favoris sont déjà à jour.', '🔄');
-            }
-
-            showOnlyFavorites = true;
-            selectedState = '';
-            const label = document.getElementById('mapHoverLabel');
-            if (label) label.textContent = 'Mes plaques favorites';
-            updateFilterButtons();
-            filterData();
-
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        parseAndImportFavorites(favsParam);
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     const prefixParam = urlParams.get('prefix') || window.location.hash.replace('#', '');
@@ -138,7 +255,7 @@ function initSyncFavorites() {
 
         const shareData = {
             title: 'Synchronisation Kfz-Kennzeichen Finder',
-            text: `Ouvre ce lien sur ton autre appareil pour importer mes ${favorites.length} plaque(s) favorite(s) :`,
+            text: `Ouvre ce lien ou colle-le dans le menu Importer de l'application pour récupérer mes ${favorites.length} plaque(s) favorite(s) :`,
             url: syncUrl
         };
 
@@ -541,6 +658,7 @@ function updateFilterButtons() {
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
     const headerFavBtn = document.getElementById('headerFavBtn');
+    const importFavBtn = document.getElementById('importFavBtn');
     const syncFavBtn = document.getElementById('syncFavBtn');
     const clearFavBtn = document.getElementById('clearFavBtn');
 
@@ -552,7 +670,13 @@ function updateFilterButtons() {
         }
     }
 
-    // Affichage conditionnel de Synchroniser et Vider : uniquement en vue Favoris avec >= 1 élément
+    // Importer est visible dès que la vue Favoris est active (même si 0 favoris)
+    if (importFavBtn) {
+        if (showOnlyFavorites) importFavBtn.classList.remove('hidden');
+        else importFavBtn.classList.add('hidden');
+    }
+
+    // Synchroniser et Vider sont visibles uniquement en vue Favoris avec >= 1 élément
     const canManageFavorites = showOnlyFavorites && favorites.length > 0;
     if (syncFavBtn) {
         if (canManageFavorites) syncFavBtn.classList.remove('hidden');
@@ -837,6 +961,17 @@ function closePlateModal() {
 }
 
 document.addEventListener('keydown', (e) => {
+    const importModal = document.getElementById('importModal');
+    if (importModal && !importModal.classList.contains('hidden') && e.key === 'Escape') {
+        const content = document.getElementById('importModalContent');
+        if (content) {
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+        }
+        setTimeout(() => importModal.classList.add('hidden'), 200);
+        return;
+    }
+
     const modal = document.getElementById('plateModal');
     if (!modal || modal.classList.contains('hidden')) return;
 
@@ -932,6 +1067,20 @@ function filterData() {
     });
 
     displayResults(filteredPlatesData);
+}
+
+/* --- AFFICHAGE DE LA DATE DE MISE À JOUR AU CLIC SUR LA VERSION --- */
+function initVersionBadge() {
+    const versionBtn = document.getElementById('versionBadgeBtn');
+    const versionText = document.getElementById('versionBadgeText');
+    if (!versionBtn || !versionText) return;
+
+    const versionNumber = versionText.textContent.trim();
+    const releaseDate = versionBtn.dataset.releaseDate || 'Date inconnue';
+
+    versionBtn.onclick = () => {
+        showActionToast(`Version ${versionNumber} — Mise à jour le ${releaseDate}`, '🗓️');
+    };
 }
 
 loadData();
