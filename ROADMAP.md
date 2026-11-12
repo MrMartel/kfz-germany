@@ -28,6 +28,20 @@ Ce document recense les pistes fonctionnelles et techniques prévues pour les pr
 - [ ] **Notes personnelles par préfixe** : Ajout d'un mémo texte privé par plaque dans `localStorage` (inclus dans l'exportation/importation).
 - [ ] **Raccourci clavier global** : Focus automatique sur la barre de recherche via `/` ou `Cmd+K` / `Ctrl+K`.
 
+## 📸 5. Car-Spotting & Carnet de Chasse
+- [ ] **Journal des observations (*Spotting Log*)** : Distinction entre « Favoris » et « Plaques croisées en vrai » avec date de première observation, compteur de vues et jauge de progression globale.
+- [ ] **Export visuel PNG (Canvas API)** : Génération d'une fiche image récapitulative (carte colorée + statistiques) partageable directement sur mobile.
+- [ ] **Filtre par axe autoroutier (*Autobahn*)** : Sélection des préfixes situés le long des grands axes (A5, A8, A3, A1, etc.) pour un usage en road-trip.
+
+## 📖 6. Culture & Réglementation Automobile Allemande
+- [ ] **Guide visuel des macarons (*HU / TÜV* & *Umweltplakette*)** : Explication interactive du code couleur annuel et de la lecture horaire des macarons de contrôle technique.
+- [ ] **Encyclopédie des plaques spéciales** : Fiches dédiées aux plaques de transit (bande jaune), d'exportation (bande rouge) et aux codes pays du corps diplomatique (`0-XX`).
+- [ ] **Étymologie des préfixes** : Explication de l'origine des abréviations non évidentes (anciens noms de districts ou fusions administratives).
+
+## 🔍 7. Recherche Intelligente & Outils de Partage
+- [ ] **Recherche sans accents / umlauts (`ä, ö, ü, ß`)** : Normalisation Unicode pour que `munchen` ou `koln` trouvent immédiatement `München` et `Köln`.
+- [ ] **Synchronisation par QR Code** : Affichage d'un QR Code sur l'écran du PC lors du clic sur *Synchroniser* pour un scan direct avec l'appareil photo de l'iPhone.
+- [ ] **Exportation CSV / JSON** : Téléchargement d'une sauvegarde locale de ses favoris et observations.
 ---
 
 ## 📋 Matrice de priorisation
