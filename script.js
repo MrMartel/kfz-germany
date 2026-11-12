@@ -27,6 +27,7 @@ const stateCoatOfArms = {
 
 async function loadData() {
     initTheme();
+    initHeaderFavorites();
     loadSVGMap();
 
     try {
@@ -75,26 +76,63 @@ function checkDeepLink() {
 function initTheme() {
     const themeBtn = document.getElementById('themeToggleBtn');
     const icon = document.getElementById('themeToggleIcon');
+    const label = document.getElementById('themeToggleLabel');
     const savedTheme = localStorage.getItem('kfz_theme') || 'dark';
+
+    const applyThemeUI = (isDark) => {
+        if (icon) icon.textContent = isDark ? '🌙' : '☀️';
+        if (label) label.textContent = isDark ? 'Nuit' : 'Jour';
+    };
 
     if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark');
-        if (icon) icon.textContent = '☀️';
+        applyThemeUI(false);
     } else {
         document.documentElement.classList.add('dark');
-        if (icon) icon.textContent = '🌙';
+        applyThemeUI(true);
     }
 
     if (themeBtn) {
         themeBtn.onclick = () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('kfz_theme', isDark ? 'dark' : 'light');
-            if (icon) icon.textContent = isDark ? '🌙' : '☀️';
+            applyThemeUI(isDark);
         };
     }
 }
 
-/* --- GESTION DES FAVORIS (LOCALSTORAGE) --- */
+/* --- GESTION DES FAVORIS (EN-TÊTE + LOCALSTORAGE) --- */
+function initHeaderFavorites() {
+    const headerFavBtn = document.getElementById('headerFavBtn');
+    updateFavoritesCounter();
+
+    if (headerFavBtn) {
+        headerFavBtn.onclick = () => {
+            showOnlyFavorites = !showOnlyFavorites;
+            if (showOnlyFavorites) {
+                selectedState = '';
+                const label = document.getElementById('mapHoverLabel');
+                const clearMapBtn = document.getElementById('clearMapSelectionBtn');
+                if (label) label.textContent = 'Mes plaques favorites';
+                if (clearMapBtn) clearMapBtn.classList.add('hidden');
+                highlightMapState('');
+            } else {
+                const label = document.getElementById('mapHoverLabel');
+                if (label) label.textContent = 'Toutes les régions';
+            }
+            updateFilterButtons();
+            filterData();
+        };
+    }
+}
+
+function updateFavoritesCounter() {
+    const headerFavText = document.getElementById('headerFavText');
+    if (headerFavText) {
+        headerFavText.textContent = `★ Favoris (${favorites.length})`;
+    }
+}
+
 function toggleFavorite(prefix, event) {
     if (event) event.stopPropagation();
 
@@ -106,10 +144,7 @@ function toggleFavorite(prefix, event) {
     }
     localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
 
-    const favBtn = document.getElementById('btn-favorites');
-    if (favBtn) {
-        favBtn.textContent = `★ Mes plaques favorites (${favorites.length})`;
-    }
+    updateFavoritesCounter();
 
     if (currentModalIndex !== -1 && filteredPlatesData[currentModalIndex]) {
         updateModalFavButton(filteredPlatesData[currentModalIndex].prefix);
@@ -382,18 +417,6 @@ function initStatesFilter() {
     };
     container.appendChild(allBtn);
 
-    const favBtn = document.createElement('button');
-    favBtn.id = 'btn-favorites';
-    favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white';
-    favBtn.textContent = `★ Mes plaques favorites (${favorites.length})`;
-    favBtn.onclick = () => {
-        showOnlyFavorites = true;
-        selectedState = '';
-        updateFilterButtons();
-        filterData();
-    };
-    container.appendChild(favBtn);
-
     states.forEach(state => {
         const btn = document.createElement('button');
         btn.dataset.state = state;
@@ -410,13 +433,13 @@ function initStatesFilter() {
 function updateFilterButtons() {
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
-    const favBtn = document.getElementById('btn-favorites');
+    const headerFavBtn = document.getElementById('headerFavBtn');
 
-    if (favBtn) {
+    if (headerFavBtn) {
         if (showOnlyFavorites) {
-            favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-amber-500 text-white shadow-md shadow-amber-500/30';
+            headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-amber-500 text-white shadow-md shadow-amber-500/30';
         } else {
-            favBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white';
+            headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white shadow-sm';
         }
     }
 
@@ -608,7 +631,6 @@ function openPlateModal(item) {
         };
     }
 
-    // Partage natif avec paramètre d'URL (Deep link)
     const shareBtn = document.getElementById('modalShareBtn');
     if (shareBtn) {
         shareBtn.onclick = async () => {
