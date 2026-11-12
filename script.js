@@ -29,6 +29,7 @@ async function loadData() {
     initTheme();
     initHeaderFavorites();
     initSyncFavorites();
+    initClearFavorites();
     loadSVGMap();
 
     try {
@@ -130,10 +131,7 @@ function initSyncFavorites() {
     if (!syncBtn) return;
 
     syncBtn.onclick = async () => {
-        if (favorites.length === 0) {
-            showActionToast('Ajoutez au moins un favori (☆) avant de synchroniser.', '⚠️');
-            return;
-        }
+        if (favorites.length === 0) return;
 
         const baseUrl = window.location.origin + window.location.pathname;
         const syncUrl = `${baseUrl}?favs=${encodeURIComponent(favorites.join(','))}`;
@@ -157,6 +155,25 @@ function initSyncFavorites() {
             } catch (err) {
                 prompt('Copiez ce lien pour synchroniser vos favoris :', syncUrl);
             }
+        }
+    };
+}
+
+/* --- RÉINITIALISATION DE TOUS LES FAVORIS --- */
+function initClearFavorites() {
+    const clearBtn = document.getElementById('clearFavBtn');
+    if (!clearBtn) return;
+
+    clearBtn.onclick = () => {
+        if (favorites.length === 0) return;
+
+        if (confirm(`Voulez-vous vraiment supprimer vos ${favorites.length} plaque(s) favorite(s) ?`)) {
+            favorites = [];
+            localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
+            updateFavoritesCounter();
+            updateFilterButtons();
+            filterData();
+            showActionToast('Tous vos favoris ont été supprimés.', '🗑️');
         }
     };
 }
@@ -234,6 +251,7 @@ function toggleFavorite(prefix, event) {
     localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
 
     updateFavoritesCounter();
+    updateFilterButtons();
 
     if (currentModalIndex !== -1 && filteredPlatesData[currentModalIndex]) {
         updateModalFavButton(filteredPlatesData[currentModalIndex].prefix);
@@ -524,15 +542,25 @@ function updateFilterButtons() {
     const allBtn = document.getElementById('btn-all');
     const headerFavBtn = document.getElementById('headerFavBtn');
     const syncFavBtn = document.getElementById('syncFavBtn');
+    const clearFavBtn = document.getElementById('clearFavBtn');
 
     if (headerFavBtn) {
         if (showOnlyFavorites) {
             headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-amber-500 text-white shadow-md shadow-amber-500/30';
-            if (syncFavBtn) syncFavBtn.classList.remove('hidden');
         } else {
             headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white shadow-sm';
-            if (syncFavBtn) syncFavBtn.classList.add('hidden');
         }
+    }
+
+    // Affichage conditionnel de Synchroniser et Vider : uniquement en vue Favoris avec >= 1 élément
+    const canManageFavorites = showOnlyFavorites && favorites.length > 0;
+    if (syncFavBtn) {
+        if (canManageFavorites) syncFavBtn.classList.remove('hidden');
+        else syncFavBtn.classList.add('hidden');
+    }
+    if (clearFavBtn) {
+        if (canManageFavorites) clearFavBtn.classList.remove('hidden');
+        else clearFavBtn.classList.add('hidden');
     }
 
     if (allBtn) {
