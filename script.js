@@ -28,6 +28,7 @@ const stateCoatOfArms = {
 async function loadData() {
     initTheme();
     initHeaderFavorites();
+    initSyncFavorites();
     loadSVGMap();
 
     try {
@@ -39,13 +40,13 @@ async function loadData() {
         platesData = await response.json();
         filteredPlatesData = [...platesData];
         initStatesFilter();
+        checkDeepLink();
         displayResults(filteredPlatesData);
         setupSearchControls();
         setupMapClearControl();
         setupBackToTop();
         setupModalNavigation();
         initServiceWorker();
-        checkDeepLink();
     } catch (error) {
         console.error("Erreur de chargement data.json :", error);
         const grid = document.getElementById('resultsGrid');
@@ -59,17 +60,105 @@ async function loadData() {
     }
 }
 
-/* --- DEEP LINKING (OUVERTURE AUTOMATIQUE D'UNE PLAQUE VIA L'URL) --- */
+/* --- NOTIFICATION FLOTTANTE (TOAST) --- */
+function showActionToast(message, icon = '✅') {
+    const toast = document.getElementById('actionToast');
+    const toastText = document.getElementById('actionToastText');
+    const toastIcon = document.getElementById('actionToastIcon');
+    if (!toast || !toastText) return;
+
+    if (toastIcon) toastIcon.textContent = icon;
+    toastText.textContent = message;
+    toast.classList.remove('hidden');
+
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3500);
+}
+
+/* --- DEEP LINKING & IMPORTATION DES FAVORIS VIA URL --- */
 function checkDeepLink() {
     const urlParams = new URLSearchParams(window.location.search);
-    const prefixParam = urlParams.get('prefix') || window.location.hash.replace('#', '');
     
+    const favsParam = urlParams.get('favs');
+    if (favsParam) {
+        const incomingPrefixes = favsParam.split(',')
+            .map(p => p.trim().toUpperCase())
+            .filter(p => platesData.some(item => item.prefix.toUpperCase() === p));
+
+        if (incomingPrefixes.length > 0) {
+            const validNormalized = incomingPrefixes.map(p => {
+                const match = platesData.find(item => item.prefix.toUpperCase() === p);
+                return match ? match.prefix : p;
+            });
+
+            const previousCount = favorites.length;
+            favorites = [...new Set([...favorites, ...validNormalized])];
+            localStorage.setItem('kfz_favorites', JSON.stringify(favorites));
+            updateFavoritesCounter();
+
+            const addedCount = favorites.length - previousCount;
+            if (addedCount > 0) {
+                showActionToast(`${addedCount} nouveau(x) favori(s) importé(s) !`, '★');
+            } else {
+                showActionToast('Vos favoris sont déjà à jour.', '🔄');
+            }
+
+            showOnlyFavorites = true;
+            selectedState = '';
+            const label = document.getElementById('mapHoverLabel');
+            if (label) label.textContent = 'Mes plaques favorites';
+            updateFilterButtons();
+            filterData();
+
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    const prefixParam = urlParams.get('prefix') || window.location.hash.replace('#', '');
     if (prefixParam) {
         const target = platesData.find(p => p.prefix.toLowerCase() === prefixParam.toLowerCase().trim());
         if (target) {
             openPlateModal(target);
         }
     }
+}
+
+/* --- GÉNÉRATION DU LIEN DE SYNCHRONISATION DES FAVORIS --- */
+function initSyncFavorites() {
+    const syncBtn = document.getElementById('syncFavBtn');
+    if (!syncBtn) return;
+
+    syncBtn.onclick = async () => {
+        if (favorites.length === 0) {
+            showActionToast('Ajoutez au moins un favori (☆) avant de synchroniser.', '⚠️');
+            return;
+        }
+
+        const baseUrl = window.location.origin + window.location.pathname;
+        const syncUrl = `${baseUrl}?favs=${encodeURIComponent(favorites.join(','))}`;
+
+        const shareData = {
+            title: 'Synchronisation Kfz-Kennzeichen Finder',
+            text: `Ouvre ce lien sur ton autre appareil pour importer mes ${favorites.length} plaque(s) favorite(s) :`,
+            url: syncUrl
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.log('Partage annulé :', err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(syncUrl);
+                showActionToast(`Lien de synchro (${favorites.length} favoris) copié !`, '📋');
+            } catch (err) {
+                prompt('Copiez ce lien pour synchroniser vos favoris :', syncUrl);
+            }
+        }
+    };
 }
 
 /* --- GESTION DU THÈME CLAIR / SOMBRE --- */
@@ -434,12 +523,15 @@ function updateFilterButtons() {
     const buttons = document.querySelectorAll('.state-btn');
     const allBtn = document.getElementById('btn-all');
     const headerFavBtn = document.getElementById('headerFavBtn');
+    const syncFavBtn = document.getElementById('syncFavBtn');
 
     if (headerFavBtn) {
         if (showOnlyFavorites) {
             headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-amber-500 text-white shadow-md shadow-amber-500/30';
+            if (syncFavBtn) syncFavBtn.classList.remove('hidden');
         } else {
             headerFavBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-white shadow-sm';
+            if (syncFavBtn) syncFavBtn.classList.add('hidden');
         }
     }
 
@@ -652,9 +744,9 @@ function openPlateModal(item) {
             } else {
                 try {
                     await navigator.clipboard.writeText(shareUrl);
-                    alert('Lien direct vers la plaque copié dans le presse-papier !');
+                    showActionToast('Lien direct vers la plaque copié !', '🔗');
                 } catch (err) {
-                    alert('Impossible de copier le lien.');
+                    prompt('Copiez ce lien :', shareUrl);
                 }
             }
         };
